@@ -13,7 +13,7 @@ import com.tomahim.geodata.entities.Country;
 @Stateless
 public class CountryDao implements ICountryDao {
 
-	@PersistenceContext(name="MySQLDS")
+	@PersistenceContext(name="geodata")
 	protected EntityManager entityManager;
 	
 	public List<Country> findAll() {

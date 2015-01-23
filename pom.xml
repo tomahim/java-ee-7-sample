@@ -42,7 +42,7 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <outputDirectory>deployments</outputDirectory>
-              		  <warName>ROOT</warName>
+              		  <warName>geodata</warName>
                 </configuration>
             </plugin>
         </plugins>

@@ -8,6 +8,7 @@ import javax.json.JsonObject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import com.tomahim.geodata.utils.JsonUtil;
 import com.tomahim.geodata.entities.City;
@@ -15,7 +16,7 @@ import com.tomahim.geodata.entities.Country;
 import com.tomahim.geodata.services.CityService;
 import com.tomahim.geodata.services.CountryService;
 
-@Path("countries")
+@Path("countries") 
 public class CountryRest {
 	
 	@EJB

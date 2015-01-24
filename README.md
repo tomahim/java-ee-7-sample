@@ -4,5 +4,3 @@ Java EE 7 - Sample App with WildFly
 You can see the app live here : http://geodata-tomahim.rhcloud.com/
 
 ### TODO
-
-- Gedneric dac

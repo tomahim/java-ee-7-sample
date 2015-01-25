@@ -29,4 +29,8 @@ public class CityService {
 	public List<City> getCitiesByCountryId(Integer countryId) {
 		return cityDao.getCitiesByCountryId(countryId);
 	}
+	
+	public void update(City city) {
+		cityDao.update(city);
+	}
  }

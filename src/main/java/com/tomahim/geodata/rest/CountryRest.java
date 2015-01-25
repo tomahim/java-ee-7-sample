@@ -17,6 +17,7 @@ import com.tomahim.geodata.services.CityService;
 import com.tomahim.geodata.services.CountryService;
 
 @Path("countries") 
+@Produces("application/json")
 public class CountryRest {
 	
 	@EJB

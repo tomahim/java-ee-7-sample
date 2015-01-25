@@ -20,9 +20,9 @@ public class City implements Serializable {
 	@Column(name="is_capital")
 	private byte isCapital;
 
-	private float lat;
+	private Float lat;
 
-	private float lng;
+	private Float lng;
 
 	private String name;
 
@@ -49,19 +49,19 @@ public class City implements Serializable {
 		this.isCapital = isCapital;
 	}
 
-	public float getLat() {
+	public Float getLat() {
 		return this.lat;
 	}
 
-	public void setLat(float lat) {
+	public void setLat(Float lat) {
 		this.lat = lat;
 	}
 
-	public float getLng() {
+	public Float getLng() {
 		return this.lng;
 	}
 
-	public void setLng(float lng) {
+	public void setLng(Float lng) {
 		this.lng = lng;
 	}
 

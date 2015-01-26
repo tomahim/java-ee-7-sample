@@ -1,4 +1,4 @@
-angular.module('geodata', ['ui.router', 'restangular'])
+angular.module('geodata', ['ui.router', 'restangular', 'geodata-utils'])
 .config(function($stateProvider, $urlRouterProvider) {
 	
 	  $urlRouterProvider.otherwise("/countries");

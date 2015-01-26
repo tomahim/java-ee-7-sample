@@ -8,7 +8,10 @@
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
 </head>
 <body>
-	<div id="wrapper">
+	<div id="wrapper" ng-init="toggle=true" ng-class="{'toggled' : toggle}">
+		<div class="toggle-menu btn bn-primary" id="menu-toggle" ng-click="toggle=!toggle">
+			<span class="glyphicon glyphicon-th-large"></span>
+		</div>
 
         <!-- Sidebar -->
         <div id="sidebar-wrapper">
@@ -62,12 +65,6 @@
 	<script src="js/app.js"></script>
 	<script src="js/countries-ctrl.js"></script>
 	<script src="js/country-da.js"></script>
-	
-	 <script>
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
-    });
-    </script>
+	<script src="js/utils/cache-svc.js"></script>
 </body>
 </html>

@@ -16,8 +16,12 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 public class JsonUtil {
+	
+	private static String getPropertyFromMethod(Method method) {
+		return StringUtil.lowercaseFirstLetter(method.getName().substring(3, method.getName().length()));
+	}
 		
-	private static JsonObjectBuilder getJsonObjectBuilderFromJavaObject(Object object) {
+	private static JsonObjectBuilder getJsonObjectBuilderFromJavaObject(Object object, int maxDepth) {
 		JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
 		if(object != null && object.getClass() != null) {
 			ArrayList<Method> methods = ReflectUtil.findGetters(object.getClass());
@@ -25,48 +29,57 @@ public class JsonUtil {
 			for (Method method : methods) {
 				Class<?> returnType = method.getReturnType();
 				if(ReflectUtil.isPrimiveObject(returnType)) {
-					propertyName = method.getName().substring(3, method.getName().length());
-					propertyName = StringUtil.lowercaseFirstLetter(propertyName);
 					try {
-						jsonBuilder.add(propertyName, String.valueOf(method.invoke(object)));
+						jsonBuilder.add(getPropertyFromMethod(method), String.valueOf(method.invoke(object)));
 					} catch (IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException | SecurityException e) {
 						e.printStackTrace();
 					}
-				} else if(returnType.equals(List.class)) {
-					 //TODO : What should we do with arrays ? StackOverflow risk !
-					/*try {
-						jsonBuilder.add(propertyName, getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object)));
-					} catch (IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | SecurityException e) {
-						e.printStackTrace();
-					}*/
-				} else {
-					/*try {
-						jsonBuilder.add(StringUtil.lowercaseFirstLetter(returnType.getSimpleName()), getJsonObjectBuilderFromJavaObject(method.invoke(object)));					
-					} catch (IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | SecurityException e) {
-						e.printStackTrace();
-					}*/
+				} else if(maxDepth > 0) {
+					maxDepth = maxDepth - 1;
+					if(returnType.equals(List.class)) {
+						 //TODO : What should we do with arrays ? StackOverflow risk !
+						try {
+							jsonBuilder.add(getPropertyFromMethod(method), getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object), maxDepth));
+						} catch (IllegalAccessException | IllegalArgumentException
+								| InvocationTargetException | SecurityException e) {
+							e.printStackTrace();
+						}
+					} else {
+						try {
+							jsonBuilder.add(StringUtil.lowercaseFirstLetter(returnType.getSimpleName()), getJsonObjectBuilderFromJavaObject(method.invoke(object), maxDepth));					
+						} catch (IllegalAccessException | IllegalArgumentException
+								| InvocationTargetException | SecurityException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}
 		}
 		return jsonBuilder;
 	}
 	
-	private static JsonArrayBuilder getJsonArrayBuilderFomJavaList(List<?> list) {
+	private static JsonArrayBuilder getJsonArrayBuilderFomJavaList(List<?> list, int maxDepth) {
 		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 	    for(Object o : list) {
-	        jsonArrayBuilder.add(getJsonObjectBuilderFromJavaObject(o));
+	        jsonArrayBuilder.add(getJsonObjectBuilderFromJavaObject(o, 1));
 	    }
 	    return jsonArrayBuilder;
 	}
 	
+	public static JsonObject createJsonObjectFromJavaObject(Object object, int maxDepth) {
+		return getJsonObjectBuilderFromJavaObject(object, maxDepth).build();
+	}
+	
+	public static JsonArray createJsonArrayFromJavaList(List<?> list, int maxDepth) {
+	    return getJsonArrayBuilderFomJavaList(list, maxDepth).build();
+	}
+
 	public static JsonObject createJsonObjectFromJavaObject(Object object) {
-		return getJsonObjectBuilderFromJavaObject(object).build();
+		return getJsonObjectBuilderFromJavaObject(object, 1).build();
 	}
 	
 	public static JsonArray createJsonArrayFromJavaList(List<?> list) {
-	    return getJsonArrayBuilderFomJavaList(list).build();
+	    return getJsonArrayBuilderFomJavaList(list, 1).build();
 	}
 }

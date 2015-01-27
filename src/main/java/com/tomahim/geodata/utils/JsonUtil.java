@@ -17,6 +17,8 @@ import javax.json.JsonObjectBuilder;
 
 public class JsonUtil {
 	
+	final static int DEFAULT_MAX_DEPTH = 1;
+	
 	private static String getPropertyFromMethod(Method method) {
 		return StringUtil.lowercaseFirstLetter(method.getName().substring(3, method.getName().length()));
 	}
@@ -25,7 +27,6 @@ public class JsonUtil {
 		JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
 		if(object != null && object.getClass() != null) {
 			ArrayList<Method> methods = ReflectUtil.findGetters(object.getClass());
-			String propertyName = null;
 			for (Method method : methods) {
 				Class<?> returnType = method.getReturnType();
 				if(ReflectUtil.isPrimiveObject(returnType)) {
@@ -36,9 +37,9 @@ public class JsonUtil {
 						e.printStackTrace();
 					}
 				} else if(maxDepth > 0) {
+					//Avoiding insecure StackOverlow!
 					maxDepth = maxDepth - 1;
 					if(returnType.equals(List.class)) {
-						 //TODO : What should we do with arrays ? StackOverflow risk !
 						try {
 							jsonBuilder.add(getPropertyFromMethod(method), getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object), maxDepth));
 						} catch (IllegalAccessException | IllegalArgumentException
@@ -76,10 +77,10 @@ public class JsonUtil {
 	}
 
 	public static JsonObject createJsonObjectFromJavaObject(Object object) {
-		return getJsonObjectBuilderFromJavaObject(object, 1).build();
+		return getJsonObjectBuilderFromJavaObject(object, DEFAULT_MAX_DEPTH).build();
 	}
 	
 	public static JsonArray createJsonArrayFromJavaList(List<?> list) {
-	    return getJsonArrayBuilderFomJavaList(list, 1).build();
+	    return getJsonArrayBuilderFomJavaList(list, DEFAULT_MAX_DEPTH).build();
 	}
 }

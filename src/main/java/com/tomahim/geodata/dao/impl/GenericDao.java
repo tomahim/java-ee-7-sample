@@ -12,7 +12,7 @@ public class GenericDao <T, PK extends Serializable> implements IGenericDao<T, P
 
 	protected Class<T> entityClass;
 	
-	@PersistenceContext(unitName="geodataDS")
+	//@PersistenceContext(unitName="geodataDS")
 	protected EntityManager entityManager;
 	
 	public GenericDao() {

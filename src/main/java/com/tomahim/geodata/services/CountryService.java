@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.transaction.Transactional;
 
 import com.tomahim.geodata.dao.interfaces.ICountryDao;
 import com.tomahim.geodata.entities.Country;
@@ -13,7 +14,8 @@ public class CountryService {
 	
 	@EJB
 	protected ICountryDao countryDao;
-	
+
+	@Transactional
 	public List<Country> getAll() {
 		return countryDao.findAll();
 	}

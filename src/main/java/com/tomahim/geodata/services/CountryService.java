@@ -20,6 +20,7 @@ public class CountryService {
 		return countryDao.findAll();
 	}
 
+	@Transactional
 	public Country getById(Integer id) {
 		return countryDao.findById(id);
 	}

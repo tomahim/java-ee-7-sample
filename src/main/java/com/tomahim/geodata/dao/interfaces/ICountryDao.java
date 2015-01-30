@@ -7,6 +7,4 @@ import com.tomahim.geodata.entities.Country;
 
 public interface ICountryDao extends IGenericDao<Country, Integer> {
 
-	List<Country> findAll();
-
 }

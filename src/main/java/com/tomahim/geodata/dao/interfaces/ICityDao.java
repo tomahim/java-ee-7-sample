@@ -7,8 +7,6 @@ import com.tomahim.geodata.entities.City;
 
 public interface ICityDao extends IGenericDao<City, Integer>{
 
-	public List<City> findAll();
-
 	public City getCapitalByCountryId(Integer countryId);
 	
 	public List<City> getCitiesByCountryId(Integer countryId);

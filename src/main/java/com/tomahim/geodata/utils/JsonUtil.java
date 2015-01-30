@@ -63,7 +63,7 @@ public class JsonUtil {
 	private static JsonArrayBuilder getJsonArrayBuilderFomJavaList(List<?> list, int maxDepth) {
 		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 	    for(Object o : list) {
-	        jsonArrayBuilder.add(getJsonObjectBuilderFromJavaObject(o, 1));
+	        jsonArrayBuilder.add(getJsonObjectBuilderFromJavaObject(o, maxDepth));
 	    }
 	    return jsonArrayBuilder;
 	}

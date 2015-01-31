@@ -5,7 +5,7 @@
         	<tr>
         		<td></td>
         	</tr>
-        	<tr ng-repeat="country in countries | limitTo:10" ng-click="selectCountry(country)">
+        	<tr ng-repeat="country in countries | limitTo:20" ng-click="selectCountry(country)">
         		<td>
         			<img src="images/flags/png/{{country.cca2}}-24.png" />
         			{{country.name}} - {{country.cca2}}
@@ -14,6 +14,6 @@
         </table>
     </div>
     <div class="col-lg-6">
-    	{{feature}}
+    	 <div id="map"></div>
     </div>
 </div>

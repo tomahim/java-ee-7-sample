@@ -3,10 +3,12 @@ Java EE 7 - Sample App with WildFly
 
 ### TODO
 
-##### Configure lazy loading
+- Adding gulpto build projet
+- Ignoring bower components and openshift settings from git repo
 
-- Configure Open Session in View pattern like described here : 
-https://developer.jboss.org/wiki/OpenSessionInView
+### Useful links
 
-Useful link to understand the problem : 
+##### Lazy loading solutions
+
 http://www.javacodegeeks.com/2012/07/four-solutions-to-lazyinitializationexc_05.html
+https://developer.jboss.org/wiki/OpenSessionInView

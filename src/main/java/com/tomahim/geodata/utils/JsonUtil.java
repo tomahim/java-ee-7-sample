@@ -23,36 +23,22 @@ public class JsonUtil {
 		return StringUtil.lowercaseFirstLetter(method.getName().substring(3, method.getName().length()));
 	}
 		
-	private static JsonObjectBuilder getJsonObjectBuilderFromJavaObject(Object object, int maxDepth) {
+	private static JsonObjectBuilder getJsonObjectBuilderFromJavaObject(Object object, int maxDepth) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
 		if(object != null && object.getClass() != null) {
 			ArrayList<Method> methods = ReflectUtil.findGetters(object.getClass());
 			for (Method method : methods) {
 				Class<?> returnType = method.getReturnType();
 				if(ReflectUtil.isPrimiveObject(returnType)) {
-					try {
-						jsonBuilder.add(getPropertyFromMethod(method), String.valueOf(method.invoke(object)));
-					} catch (IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | SecurityException e) {
-						e.printStackTrace();
-					}
+					jsonBuilder.add(getPropertyFromMethod(method), String.valueOf(method.invoke(object)));
 				} else if(maxDepth > 0) {
 					//Avoiding insecure StackOverlow!
 					maxDepth = maxDepth - 1;
 					if(returnType.equals(List.class)) {
-						try {
-							jsonBuilder.add(getPropertyFromMethod(method), getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object), maxDepth));
-						} catch (IllegalAccessException | IllegalArgumentException
-								| InvocationTargetException | SecurityException e) {
-							e.printStackTrace();
-						}
+						jsonBuilder.add(getPropertyFromMethod(method), getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object), maxDepth));
 					} else {
-						try {
-							jsonBuilder.add(StringUtil.lowercaseFirstLetter(returnType.getSimpleName()), getJsonObjectBuilderFromJavaObject(method.invoke(object), maxDepth));					
-						} catch (IllegalAccessException | IllegalArgumentException
-								| InvocationTargetException | SecurityException e) {
-							e.printStackTrace();
-						}
+						jsonBuilder.add(StringUtil.lowercaseFirstLetter(returnType.getSimpleName()), getJsonObjectBuilderFromJavaObject(method.invoke(object), maxDepth));					
+						
 					}
 				}
 			}
@@ -63,13 +49,26 @@ public class JsonUtil {
 	private static JsonArrayBuilder getJsonArrayBuilderFomJavaList(List<?> list, int maxDepth) {
 		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 	    for(Object o : list) {
-	        jsonArrayBuilder.add(getJsonObjectBuilderFromJavaObject(o, maxDepth));
+	        try {
+				jsonArrayBuilder.add(getJsonObjectBuilderFromJavaObject(o, maxDepth));
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    }
 	    return jsonArrayBuilder;
 	}
 	
 	public static JsonObject createJsonObjectFromJavaObject(Object object, int maxDepth) {
-		return getJsonObjectBuilderFromJavaObject(object, maxDepth).build();
+		try {
+			return getJsonObjectBuilderFromJavaObject(object, maxDepth).build();
+		} catch (IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static JsonArray createJsonArrayFromJavaList(List<?> list, int maxDepth) {
@@ -77,7 +76,7 @@ public class JsonUtil {
 	}
 
 	public static JsonObject createJsonObjectFromJavaObject(Object object) {
-		return getJsonObjectBuilderFromJavaObject(object, DEFAULT_MAX_DEPTH).build();
+		return createJsonObjectFromJavaObject(object, DEFAULT_MAX_DEPTH);
 	}
 	
 	public static JsonArray createJsonArrayFromJavaList(List<?> list) {

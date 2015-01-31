@@ -123,3 +123,9 @@
         margin-right: 0;
     }
 }
+
+/* LEAFLET MAP */
+
+#map {
+	height: 750px;
+}

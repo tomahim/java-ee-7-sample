@@ -15,6 +15,11 @@ angular.module('geodata').controller('CountriesCtrl', function($scope, CountryDA
 	L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 	    attribution: '',
 	    maxZoom: 18
-	}).addTo(map)
+	}).addTo(map);
+	
+	$scope.next = function() {
+		$scope.start += 20;
+		$scope.end += 20;
+	};
 	
 });

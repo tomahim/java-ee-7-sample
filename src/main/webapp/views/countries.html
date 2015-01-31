@@ -1,17 +1,18 @@
 <div class="row">
     <div class="col-lg-6">
-        <h1>Countries</h1>
-        <table class="table table-striped table-hover table-condensed">
+        <h1>Countries ({{countries.length}})</h1>
+        <table class="table table-striped table-hover table-condensed" ng-init="start=0;end=20">
         	<tr>
         		<td></td>
         	</tr>
-        	<tr ng-repeat="country in countries | limitTo:20" ng-click="selectCountry(country)">
+        	<tr ng-repeat="country in countries | slice:start:end" ng-click="selectCountry(country)">
         		<td>
         			<img src="images/flags/png/{{country.cca2}}-24.png" />
         			{{country.name}} - {{country.cca2}}
         		</td>
         	</tr>
         </table>
+        <div class="btn btn-link" ng-click="next()">Afficher plus</div>
     </div>
     <div class="col-lg-6">
     	 <div id="map"></div>

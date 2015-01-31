@@ -3,8 +3,9 @@ Java EE 7 - Sample App with WildFly
 
 ### TODO
 
-- Adding gulpto build projet
+- Adding gulp to build projet
 - Ignoring bower components and openshift settings from git repo
+- Use AOC interceptors instead of filters for OpenSessionInView handling
 
 ### Useful links
 

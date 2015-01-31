@@ -15,12 +15,10 @@ public class CountryService {
 	@EJB
 	protected ICountryDao countryDao;
 
-	@Transactional
 	public List<Country> getAll() {
 		return countryDao.findAll();
 	}
 
-	@Transactional
 	public Country getById(Integer id) {
 		return countryDao.findById(id);
 	}

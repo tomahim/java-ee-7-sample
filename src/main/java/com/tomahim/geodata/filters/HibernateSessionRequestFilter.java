@@ -26,7 +26,7 @@ public class HibernateSessionRequestFilter implements Filter {
   
         try {  
             //log.debug("Starting a database transaction");  
-            sf.openSession().beginTransaction();  
+            sf.getCurrentSession().beginTransaction();  
   
             // Call the next filter (continue request processing)  
             chain.doFilter(request, response);  
@@ -63,7 +63,8 @@ public class HibernateSessionRequestFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {  
         //log.debug("Initializing filter...");  
         //log.debug("Obtaining SessionFactory from static HibernateUtil singleton");  
-        sf = HibernateUtil.getSessionFactory();  
+    	HibernateUtil.buildSessionFactory();  
+        sf = HibernateUtil.getSessionFactory();
     	//sf = em.unwrap(Session.class).getSessionFactory();
     }
   

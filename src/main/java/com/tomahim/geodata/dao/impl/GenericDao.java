@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import com.tomahim.geodata.dao.interfaces.IGenericDao;
 import com.tomahim.geodata.entities.Country;
@@ -15,12 +16,12 @@ import com.tomahim.geodata.utils.HibernateUtil;
 
 public class GenericDao <T, PK extends Serializable> implements IGenericDao<T, PK> {
 
-	Session currentSession;
-
 	protected Class<T> entityClass;
 	
+	SessionFactory sf;
+	
 	public GenericDao() {
-		currentSession = HibernateUtil.getSessionFactory().openSession();
+		sf = HibernateUtil.getSessionFactory();
 	    ParameterizedType genericSuperclass = (ParameterizedType) getClass()
 	         .getGenericSuperclass();
 	    this.entityClass = (Class<T>) genericSuperclass
@@ -29,26 +30,26 @@ public class GenericDao <T, PK extends Serializable> implements IGenericDao<T, P
 	
 	@Override
 	public T save(T t) {
-	    return (T) currentSession.save(t);
+	    return (T) sf.getCurrentSession().save(t);
 	}
 	
 	@Override
 	public T findById(PK id) {
-	    return (T) currentSession.get(entityClass, id);
+	    return (T) sf.getCurrentSession().get(entityClass, id);
 	}
 	
 	@Override
 	public T update(T t) {
-		return (T) currentSession.merge(t);
+		return (T) sf.getCurrentSession().merge(t);
 	}
 	
 	@Override
 	public void delete(T t) {
-		currentSession.delete(t);
+		sf.getCurrentSession().delete(t);
 	}
 
 	@Override
 	public List<T> findAll() {
-	    return currentSession.createCriteria(entityClass).list();
+	    return sf.getCurrentSession().createCriteria(entityClass).list();
 	}
 }

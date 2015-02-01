@@ -33,11 +33,10 @@ public class JsonUtil {
 					jsonBuilder.add(getPropertyFromMethod(method), String.valueOf(method.invoke(object)));
 				} else if(maxDepth > 0) {
 					//Avoiding insecure StackOverlow!
-					maxDepth = maxDepth - 1;
 					if(returnType.equals(List.class)) {
-						jsonBuilder.add(getPropertyFromMethod(method), getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object), maxDepth));
+						jsonBuilder.add(getPropertyFromMethod(method), getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object), maxDepth - 1));
 					} else {
-						jsonBuilder.add(StringUtil.lowercaseFirstLetter(returnType.getSimpleName()), getJsonObjectBuilderFromJavaObject(method.invoke(object), maxDepth));					
+						jsonBuilder.add(StringUtil.lowercaseFirstLetter(returnType.getSimpleName()), getJsonObjectBuilderFromJavaObject(method.invoke(object), maxDepth - 1));					
 						
 					}
 				}

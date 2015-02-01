@@ -1,6 +1,13 @@
-angular.module('geodata').controller('CountriesCtrl', function($scope, CountryDA, CacheSvc) {
-	CountryDA.getAll().then(function(countries) {
-		$scope.countries = countries;
+angular.module('geodata').controller('CountriesCtrl', function($scope, $q, CountryDA, RegionDA) {
+	
+	$scope.activeRegion = 'all';
+	
+	$q.all({
+		countries : CountryDA.getAll(),
+		regions : RegionDA.getAll()
+	}).then(function(result) {
+		$scope.countries = result.countries;
+		$scope.regions = result.regions;
 	});
 	
 	var map = L.map('map').setView([51.505, -0.09], 2);
@@ -20,6 +27,26 @@ angular.module('geodata').controller('CountriesCtrl', function($scope, CountryDA
 	$scope.next = function() {
 		$scope.start += 20;
 		$scope.end += 20;
+	};
+	
+	$scope.prev = function() {
+		$scope.start -= 20;
+		$scope.end -= 20;
+	};
+	
+	$scope.$watch('activeRegion', function(active) {
+		if(active) {
+			$scope.start = 0;
+			$scope.end = 20;
+		}
+	});
+	
+	$scope.setActive = function(regionId) {
+		$scope.activeRegion = regionId;
+	};
+	
+	$scope.isActive = function(regionId) {
+		return $scope.activeRegion === regionId;
 	};
 	
 });

@@ -133,3 +133,7 @@
 .regions-nav.nav {
 	margin-bottom: 20px;
 }
+
+.align-right {
+	float: right;
+}

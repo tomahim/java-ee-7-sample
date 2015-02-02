@@ -4,3 +4,5 @@ target
 !.settings/.jsdtscope
 .project
 .classpath
+src/main/webapp/bower_components/
+deployments/

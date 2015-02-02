@@ -128,6 +128,7 @@
 
 #map {
 	height: 750px;
+	margin-top: 130	px;
 }
 
 .regions-nav.nav {
@@ -136,4 +137,12 @@
 
 .align-right {
 	float: right;
+}
+
+.countries-list .nav li {
+	cursor: pointer;
+}
+
+input.search-country-name {
+	margin-bottom: 20px;
 }

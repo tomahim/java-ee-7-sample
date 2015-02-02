@@ -17,12 +17,32 @@ angular.module('geodata').controller('CountriesCtrl', function($scope, $q, Count
 	    maxZoom: 18
 	}).addTo(map);
 
-	var layer = L.geoJson();
+	var layerGeoJson = L.geoJson();
+	var capitalMarker = null;
 	$scope.selectCountry = function(country) {
+		if(capitalMarker != null) {
+			map.removeLayer(capitalMarker);
+		}
+
+		var capital = _.where(country.cities, function(city) {
+			return city.isCapital;
+		})[0];
+		
+		var capitalCoordinates = [capital.lat, capital.lng];
+		map.setView(capitalCoordinates, 5);
+		
+		capitalMarker = L.marker(capitalCoordinates);
+		capitalMarker.bindPopup(
+				  '<img src="images/flags/png/' + country.cca2 + '-16.png" />'
+				+ '<b>' + country.name + '</b>'
+				+ '<br>'
+				+ capital.name).openPopup();
+		capitalMarker.addTo(map);
+		
 		CountryDA.getFeatureGeometry(country.cca2).then(function(feature) {	
-			layer.clearLayers();
-			layer.addData(feature);
-			layer.addTo(map);
+			layerGeoJson.clearLayers();
+			layerGeoJson.addData(feature);
+			layerGeoJson.addTo(map);
 		});
 	};
 	

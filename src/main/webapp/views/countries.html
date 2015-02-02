@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row countries-list">
     <div class="col-lg-6">
         <h1>Countries</h1>
         <ul class="regions-nav nav nav-pills" role="tablist">
@@ -9,17 +9,24 @@
 		  	<a>{{region.name}} <span class="badge">{{(countries | regionFilter : region.id).length}}</span></a>
 		  </li>
 		</ul>
+		<input placeholder="Nom d'un pays" class="form-control search-country-name" ng-model="searchName"></input>
+		
         <table class="table table-striped table-hover table-condensed" ng-init="start=0;end=20">
-        	<tr ng-repeat="country in countries | regionFilter: activeRegion | slice:start:end" ng-click="selectCountry(country)">
+        	<tr ng-repeat="country in countries | filter:searchName | regionFilter: activeRegion | slice:start:end" ng-click="selectCountry(country)">
         		<td>
         			<img src="images/flags/png/{{country.cca2}}-24.png" />
         			{{country.name}} - {{country.cca2}}
-        			<span class="align-right" ng-bind="country.subregion.name"></span>
+        		</td>
+        		<td>
+        			{{country.subregion.name}}
+        		</td>
+        		<td>
+        			<a>Détail</a>
         		</td>
         	</tr>
         </table>
         <div ng-show="start > 0" class="btn btn-link pull-left" ng-click="prev()">Précédent</div>
-        <div class="btn btn-link pull-right" ng-show="(countries | regionFilter: activeRegion | slice:start:end).length === 20" ng-click="next()">Suivant</div>
+        <div class="btn btn-link pull-right" ng-show="(countries | filter:searchName | regionFilter: activeRegion | slice:start:end).length === 20" ng-click="next()">Suivant</div>
     </div>
     <div class="col-lg-6">
     	 <div id="map"></div>

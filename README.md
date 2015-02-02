@@ -4,7 +4,6 @@ Java EE 7 - Sample App with WildFly
 ### TODO
 
 - Adding gulp to build projet
-- Ignoring bower components and openshift settings from git repo
 - Use AOC interceptors instead of filters for OpenSessionInView handling
 - List city of one country and possibility to add cities (bean validation and automatic retrieval of lat and lng coordinates)
 

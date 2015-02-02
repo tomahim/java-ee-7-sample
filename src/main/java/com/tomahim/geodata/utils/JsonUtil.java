@@ -28,16 +28,18 @@ public class JsonUtil {
 		if(object != null && object.getClass() != null) {
 			ArrayList<Method> methods = ReflectUtil.findGetters(object.getClass());
 			for (Method method : methods) {
-				Class<?> returnType = method.getReturnType();
-				if(ReflectUtil.isPrimiveObject(returnType)) {
-					jsonBuilder.add(getPropertyFromMethod(method), String.valueOf(method.invoke(object)));
-				} else if(maxDepth > 0) {
-					//Avoiding insecure StackOverlow!
-					if(returnType.equals(List.class)) {
-						jsonBuilder.add(getPropertyFromMethod(method), getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object), maxDepth - 1));
-					} else {
-						jsonBuilder.add(StringUtil.lowercaseFirstLetter(returnType.getSimpleName()), getJsonObjectBuilderFromJavaObject(method.invoke(object), maxDepth - 1));					
-						
+				method.setAccessible(true);
+				if(method.isAccessible()) {
+					Class<?> returnType = method.getReturnType();
+					if(ReflectUtil.isPrimiveObject(returnType)) {
+						jsonBuilder.add(getPropertyFromMethod(method), String.valueOf(method.invoke(object)));
+					} else if(maxDepth > 0) {
+						//Avoiding insecure StackOverlow!
+						if(returnType.equals(List.class)) {
+							jsonBuilder.add(getPropertyFromMethod(method), getJsonArrayBuilderFomJavaList((List<?>) method.invoke(object), maxDepth - 1));
+						} else {
+							jsonBuilder.add(StringUtil.lowercaseFirstLetter(returnType.getSimpleName()), getJsonObjectBuilderFromJavaObject(method.invoke(object), maxDepth - 1));					
+						}
 					}
 				}
 			}
@@ -64,8 +66,9 @@ public class JsonUtil {
 			return getJsonObjectBuilderFromJavaObject(object, maxDepth).build();
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			InvocationTargetException invException = (InvocationTargetException) e;
+			System.out.println(invException.getTargetException());
+			//e.printStackTrace();
 		}
 		return null;
 	}

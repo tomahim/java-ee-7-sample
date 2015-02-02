@@ -29,6 +29,10 @@ public class GoogleGeocodeApi {
 		return null;
 	}
 	
+	public GeocodeResponse searchByName(String name) {
+		return getGeocodeFromAddress(name);
+	}
+	
 	public Map<String, BigDecimal> getLatAndLng(String address) {
 		Map<String, BigDecimal> resultMap = new HashMap<String, BigDecimal>();
 		List<GeocoderResult> results = getGeocodeFromAddress(address).getResults();

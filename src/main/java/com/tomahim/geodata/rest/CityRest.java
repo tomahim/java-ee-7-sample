@@ -13,8 +13,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.hibernate.mapping.Map;
+import java.util.Map;
 
+import com.google.code.geocoder.model.GeocodeResponse;
+import com.google.code.geocoder.model.GeocoderResult;
 import com.tomahim.geodata.utils.JsonUtil;
 import com.tomahim.geodata.api.google.GoogleGeocodeApi;
 import com.tomahim.geodata.entities.City;
@@ -42,6 +44,14 @@ public class CityRest {
 	public JsonObject getById(@PathParam("id") Integer id) {
 		City city = cityService.getById(id);
 		return JsonUtil.createJsonObjectFromJavaObject(city);
+	}
+	
+	@GET
+	@Path("/search/{name}")
+	public JsonArray searchCityByName(@PathParam("name") String name) {
+		GeocodeResponse gr = geocodeApi.searchByName(name);
+		Map<String, String> map = new HashMap<String, String>();
+		return JsonUtil.createJsonArrayFromJavaList(gr.getResults(), 1);
 	}
 	
 	@GET

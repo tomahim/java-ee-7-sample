@@ -2,8 +2,8 @@ package com.tomahim.geodata.services;
 
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import com.tomahim.geodata.dao.interfaces.IRegionDao;
 import com.tomahim.geodata.entities.Region;
@@ -11,7 +11,7 @@ import com.tomahim.geodata.entities.Region;
 @Stateless
 public class RegionService {
 	
-	@EJB
+	@Inject
 	protected IRegionDao regionDao;
 	
 	public List<Region> getAll() {

@@ -3,34 +3,30 @@ package com.tomahim.geodata.rest;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-
-import java.util.Map;
 
 import com.google.code.geocoder.model.GeocodeResponse;
-import com.google.code.geocoder.model.GeocoderResult;
-import com.tomahim.geodata.utils.JsonUtil;
 import com.tomahim.geodata.api.google.GoogleGeocodeApi;
 import com.tomahim.geodata.entities.City;
-import com.tomahim.geodata.entities.Region;
 import com.tomahim.geodata.services.CityService;
+import com.tomahim.geodata.utils.JsonUtil;
 
 @Path("cities")
 @Produces("application/json")
 public class CityRest {
 	
-	@EJB
+	@Inject
 	CityService cityService;
 	
-	@EJB
+	@Inject
 	protected GoogleGeocodeApi geocodeApi;
 	
 	@GET

@@ -1,7 +1,5 @@
 package com.tomahim.geodata.dao.impl;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
 
 import com.tomahim.geodata.dao.interfaces.ICountryDao;

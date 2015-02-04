@@ -2,8 +2,8 @@ package com.tomahim.geodata.services;
 
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import com.tomahim.geodata.dao.interfaces.ISubregionDao;
 import com.tomahim.geodata.entities.Subregion;
@@ -11,7 +11,7 @@ import com.tomahim.geodata.entities.Subregion;
 @Stateless
 public class SubregionService {
 	
-	@EJB
+	@Inject
 	protected ISubregionDao subregionDao;
 	
 	public List<Subregion> getAll() {

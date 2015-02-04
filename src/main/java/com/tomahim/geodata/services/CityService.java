@@ -2,8 +2,8 @@ package com.tomahim.geodata.services;
 
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 
 import com.tomahim.geodata.dao.interfaces.ICityDao;
 import com.tomahim.geodata.entities.City;
@@ -11,7 +11,7 @@ import com.tomahim.geodata.entities.City;
 @Stateless
 public class CityService {
 	
-	@EJB
+	@Inject
 	protected ICityDao cityDao;
 	
 	public List<City> getAll() {

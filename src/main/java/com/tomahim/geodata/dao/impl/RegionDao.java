@@ -1,7 +1,6 @@
 package com.tomahim.geodata.dao.impl;
 
 import javax.ejb.Stateless;
-import javax.ws.rs.Produces;
 
 import com.tomahim.geodata.dao.interfaces.IRegionDao;
 import com.tomahim.geodata.entities.Region;

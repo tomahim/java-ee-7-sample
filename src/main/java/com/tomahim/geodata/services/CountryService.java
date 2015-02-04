@@ -2,9 +2,8 @@ package com.tomahim.geodata.services;
 
 import java.util.List;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.transaction.Transactional;
+import javax.inject.Inject;
 
 import com.tomahim.geodata.dao.interfaces.ICountryDao;
 import com.tomahim.geodata.entities.Country;
@@ -12,7 +11,7 @@ import com.tomahim.geodata.entities.Country;
 @Stateless
 public class CountryService {
 	
-	@EJB
+	@Inject
 	protected ICountryDao countryDao;
 
 	public List<Country> getAll() {

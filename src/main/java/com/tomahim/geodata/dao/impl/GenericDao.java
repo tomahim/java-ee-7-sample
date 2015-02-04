@@ -4,14 +4,9 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import com.tomahim.geodata.dao.interfaces.IGenericDao;
-import com.tomahim.geodata.entities.Country;
 import com.tomahim.geodata.utils.HibernateUtil;
 
 public class GenericDao <T, PK extends Serializable> implements IGenericDao<T, PK> {

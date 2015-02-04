@@ -6,7 +6,7 @@ Java EE 7 - Sample App with WildFly
 - Adding gulp to build projet
 - Use AOC interceptors instead of filters for OpenSessionInView handling
 - List city of one country and possibility to add cities (bean validation and automatic retrieval of lat and lng coordinates)
-- JsonUtil : possibility to select attributs in json object with a java Map
+- JsonUtil : refactor methods json object from java Map & add some unit tests
 
 ### Useful links
 

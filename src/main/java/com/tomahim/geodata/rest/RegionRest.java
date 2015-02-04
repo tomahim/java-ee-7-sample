@@ -1,6 +1,8 @@
 package com.tomahim.geodata.rest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.json.JsonArray;
@@ -31,7 +33,11 @@ public class RegionRest {
 	@Path("/{id}")
 	public JsonObject getById(@PathParam("id") Integer id) {
 		Region region = regionService.getById(id);
-		return JsonUtil.createJsonObjectFromJavaObject(region);
+		//return JsonUtil.createJsonObjectFromJavaObject(region);
+		Map<String, String> selection  = new HashMap<String, String>();
+		selection.put("id", "id");
+		selection.put("name", "name");
+		return JsonUtil.toJson(region, selection, 1);
 	}
 	
 }

@@ -32,14 +32,14 @@ public class CityRest {
 	@GET
 	public JsonArray getAll() {
 		List<City> cities = cityService.getAll();
-		return JsonUtil.createJsonArrayFromJavaList(cities);
+		return JsonUtil.toJsonArray(cities);
 	}
 	
 	@GET
 	@Path("/{id}")
 	public JsonObject getById(@PathParam("id") Integer id) {
 		City city = cityService.getById(id);
-		return JsonUtil.createJsonObjectFromJavaObject(city);
+		return JsonUtil.toJson(city);
 	}
 	
 	@GET
@@ -47,7 +47,7 @@ public class CityRest {
 	public JsonArray searchCityByName(@PathParam("name") String name) {
 		GeocodeResponse gr = geocodeApi.searchByName(name);
 		Map<String, String> map = new HashMap<String, String>();
-		return JsonUtil.createJsonArrayFromJavaList(gr.getResults(), 1);
+		return JsonUtil.toJsonArray(gr.getResults(), 1);
 	}
 	
 	@GET

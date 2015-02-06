@@ -24,14 +24,14 @@ public class SubregionRest {
 	@GET
 	public JsonArray getAll() {
 		List<Subregion> subregions = subregionService.getAll();
-		return JsonUtil.createJsonArrayFromJavaList(subregions);
+		return JsonUtil.toJsonArray(subregions);
 	}
 	
 	@GET
 	@Path("/{id}")
 	public JsonObject getById(@PathParam("id") Integer id) {
 		Subregion subregion = subregionService.getById(id);
-		return JsonUtil.createJsonObjectFromJavaObject(subregion);
+		return JsonUtil.toJson(subregion);
 	}
 	
 }

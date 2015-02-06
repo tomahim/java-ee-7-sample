@@ -29,27 +29,27 @@ public class CountryRest {
 	@GET
 	public JsonArray getAll() {
 		List<Country> countries = countryService.getAll();
-		return JsonUtil.createJsonArrayFromJavaList(countries);
+		return JsonUtil.toJsonArray(countries);
 	}
 	
 	@GET
 	@Path("/{id}")
 	public JsonObject getById(@PathParam("id") Integer id) {
 		Country country = countryService.getById(id);
-		return JsonUtil.createJsonObjectFromJavaObject(country);
+		return JsonUtil.toJson(country);
 	}
 		
 	@GET
 	@Path("/{id}/capital")
 	public JsonObject getCapitalByCountryId(@PathParam("id") Integer id) {
 		City city = cityService.getCapitalByCountryId(id);
-		return JsonUtil.createJsonObjectFromJavaObject(city);
+		return JsonUtil.toJson(city);
 	}
 	
 	@GET
 	@Path("/{id}/cities")
 	public JsonArray getCitiesByCountryId(@PathParam("id") Integer id) {
 		List<City> cities = cityService.getCitiesByCountryId(id);
-		return JsonUtil.createJsonArrayFromJavaList(cities);
+		return JsonUtil.toJsonArray(cities);
 	}
 }

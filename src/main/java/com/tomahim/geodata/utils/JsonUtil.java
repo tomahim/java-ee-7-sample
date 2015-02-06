@@ -3,6 +3,7 @@ package com.tomahim.geodata.utils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,18 +56,22 @@ public class JsonUtil {
 		return returnType.equals(List.class) || returnType.equals(Set.class);
 	}
 	
-	private static void addToJsonBuilderMethod(JsonObjectBuilder jsonBuilder, Object o, Method method, int maxDepth) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		String propertyName = computeAttributeNameFromMethod(method);
+	private static void addToJsonBuilderMethod(JsonObjectBuilder jsonBuilder, Object o, Method method, int maxDepth, String propertyName) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		String property = propertyName != null ? propertyName : computeAttributeNameFromMethod(method);
 		if(!needRecusivity(method)) {
-			jsonBuilder.add(propertyName, String.valueOf(method.invoke(o)));				
+			jsonBuilder.add(property, String.valueOf(method.invoke(o)));				
 		} else if(maxDepth > 0) {
 			//Avoiding insecure StackOverlow!
 			if(multipleObjectsReturned(method)) {
-				jsonBuilder.add(propertyName, getJsonArrayBuilderFomJavaList((List<?>) method.invoke(o), maxDepth - 1));
+				jsonBuilder.add(property, getJsonArrayBuilderFomJavaList((List<?>) method.invoke(o), maxDepth - 1));
 			} else {
-				jsonBuilder.add(propertyName, getJsonObjectBuilderFromJavaObject(method.invoke(o), maxDepth - 1));					
+				jsonBuilder.add(property, getJsonObjectBuilderFromJavaObject(method.invoke(o), maxDepth - 1));					
 			}				
 		}
+	}
+	
+	private static void addToJsonBuilderMethod(JsonObjectBuilder jsonBuilder, Object o, Method method, int maxDepth) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		addToJsonBuilderMethod(jsonBuilder, o, method, maxDepth, null);
 	}
 		
 	private static JsonObjectBuilder getJsonObjectBuilderFromJavaObject(Object object, int maxDepth) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -91,13 +96,31 @@ public class JsonUtil {
 	    return jsonArrayBuilder;
 	}
 	
+	public static List getKeysFromValue(Map hm, Object value){
+	    Set ref = hm.keySet();
+	    Iterator it = ref.iterator();
+	    List list = new ArrayList();
+
+	    while (it.hasNext()) {
+	      Object o = it.next(); 
+	      if(hm.get(o).equals(value)) { 
+	        list.add(o); 
+	      } 
+	    } 
+	    return list;
+	}
+	
 	private static JsonObjectBuilder getJsonObjectFromSpecifiedAttributes(Object object, Map<String, String> selection, int maxDepth) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
 		List<Method> methods = getAccessibleGettersMethods(object);
 		for(Method method : methods) {
 			String propertyName = computeAttributeNameFromMethod(method);
-			if(selection.containsValue(propertyName)) {
-				addToJsonBuilderMethod(jsonBuilder, object, method, maxDepth);
+			List<String> keys = getKeysFromValue(selection, propertyName);
+			if(keys.size() > 0) {
+				//TODO if more than one launch an exception 'cause two attributes with same name...				
+				if(selection.containsValue(propertyName)) {
+					addToJsonBuilderMethod(jsonBuilder, object, method, maxDepth, keys.get(0));
+				}
 			}
 		}
 		return jsonBuilder;
@@ -116,7 +139,7 @@ public class JsonUtil {
 	    return jsonArrayBuilder;
 	}
 	
-	public static JsonObject createJsonObjectFromJavaObject(Object object, int maxDepth) {
+	public static JsonObject toJson(Object object, int maxDepth) {
 		try {
 			return getJsonObjectBuilderFromJavaObject(object, maxDepth).build();
 		} catch (IllegalAccessException | IllegalArgumentException
@@ -126,15 +149,15 @@ public class JsonUtil {
 		return null;
 	}
 	
-	public static JsonArray createJsonArrayFromJavaList(List<?> list, int maxDepth) {
+	public static JsonArray toJsonArray(List<?> list, int maxDepth) {
 	    return getJsonArrayBuilderFomJavaList(list, maxDepth).build();
 	}
 
-	public static JsonObject createJsonObjectFromJavaObject(Object object) {
-		return createJsonObjectFromJavaObject(object, DEFAULT_MAX_DEPTH);
+	public static JsonObject toJson(Object object) {
+		return toJson(object, DEFAULT_MAX_DEPTH);
 	}
 	
-	public static JsonArray createJsonArrayFromJavaList(List<?> list) {
+	public static JsonArray toJsonArray(List<?> list) {
 	    return getJsonArrayBuilderFomJavaList(list, DEFAULT_MAX_DEPTH).build();
 	}
 	
@@ -149,7 +172,7 @@ public class JsonUtil {
 		return null;
 	}
 	
-	public static JsonArray toJsonList(List<?> list, Map<String, String> selection, int maxDepth) {
+	public static JsonArray toJsonArray(List<?> list, Map<String, String> selection, int maxDepth) {
 		try {
 			return getJsonArrayFromSpecifiedAttributes(list, selection, maxDepth).build();
 		} catch (IllegalAccessException | IllegalArgumentException
@@ -158,5 +181,6 @@ public class JsonUtil {
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}	
+	
 }

@@ -26,7 +26,7 @@ public class RegionRest {
 	@GET
 	public JsonArray getAll() {
 		List<Region> regions = regionService.getAll();
-		return JsonUtil.createJsonArrayFromJavaList(regions);
+		return JsonUtil.toJsonArray(regions);
 	}
 	
 	@GET
@@ -36,7 +36,7 @@ public class RegionRest {
 		//return JsonUtil.createJsonObjectFromJavaObject(region);
 		Map<String, String> selection  = new HashMap<String, String>();
 		selection.put("id", "id");
-		selection.put("name", "name");
+		selection.put("name2", "name");
 		return JsonUtil.toJson(region, selection, 1);
 	}
 	

@@ -37,7 +37,7 @@ public class RegionRest {
 		Map<String, String> selection  = new HashMap<String, String>();
 		selection.put("id", "id");
 		selection.put("name2", "name");
-		return JsonUtil.toJson(region, selection, 1);
+		return JsonUtil.toJson(region, selection);
 	}
 	
 }

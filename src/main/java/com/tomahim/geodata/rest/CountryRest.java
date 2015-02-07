@@ -41,10 +41,11 @@ public class CountryRest {
 		Map<String, String> selection  = new HashMap<String, String>();
 		selection.put("id", "id");
 		selection.put("name", "name");
-		selection.put("regionId", "region.id");
-		selection.put("regionName", "region.name");
+		selection.put("region.id", "region.id");
+		selection.put("region.name", "region.name");
 		selection.put("cities[].name", "cities.name");
 		selection.put("cities[].id", "cities.id");
+		selection.put("regionId", "region.id");
 		return JsonUtil.toJson(country, selection);
 	}
 		

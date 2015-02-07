@@ -22,6 +22,11 @@ public class JsonUtil {
 	
 	final static int DEFAULT_MAX_DEPTH = 1;
 	
+	final static String ARRAY_SYMBOL = "[].";
+	final static String DOT = ".";
+	final static String ARRAY_SPLIT_REGEX = "\\[].";
+	final static String DOT_SPLIT_REGEX = "\\."; 
+	
 	private static String getPropertyFromMethod(Method method) {
 		return StringUtil.lowercaseFirstLetter(method.getName().substring(3, method.getName().length()));
 	}
@@ -116,15 +121,24 @@ public class JsonUtil {
 		Map<String, String> nextSelection = new HashMap<String, String>();
 		String key = entry.getKey();
 		String value = entry.getValue();
-		if(!key.contains("[].")) {
+		if(!key.contains(ARRAY_SYMBOL) && !key.contains(DOT)) {
 			nextSelection.put(key, getNextValue(value));
 		} else {
-			String propertyKeys[] = key.split("\\[]."); 
+			String splitRegex = null;
+			String searchProperty = "";
+			if(key.contains(ARRAY_SYMBOL)) {
+				searchProperty += ARRAY_SYMBOL;
+				splitRegex =  ARRAY_SPLIT_REGEX;
+			} else if(key.contains(DOT)) {
+				searchProperty += DOT;
+				splitRegex =  DOT_SPLIT_REGEX;				
+			}
+			String propertyKeys[] = key.split(splitRegex); 
 			nextSelection.put(propertyKeys[1], getNextValue(value));
-			String searchProperty = propertyKeys[0];
+			searchProperty = propertyKeys[0] + searchProperty;
 			for (Map.Entry<String, String> currentEntry : selection.entrySet()) {
-				if(currentEntry.getKey().contains(searchProperty + "[].")) {
-					String currentPropertyKeys[] = currentEntry.getKey().split("\\[]."); 
+				if(currentEntry.getKey().contains(searchProperty)) {
+					String currentPropertyKeys[] = currentEntry.getKey().split(splitRegex); 
 					if(!currentPropertyKeys[1].equals(propertyKeys[1])) {
 						nextSelection.put(currentPropertyKeys[1], getNextValue(currentEntry.getValue()));
 					}
@@ -146,18 +160,23 @@ public class JsonUtil {
 			for(Iterator<Map.Entry<String, String>> it = selection.entrySet().iterator(); it.hasNext(); ) {
 			    Map.Entry<String, String> entry = it.next();
 				String currentValue = entry.getValue();
-				if(StringUtils.countMatches(currentValue, ".") > 0) {
-					String[] attributes = currentValue.split("\\.");
+				if(StringUtils.countMatches(currentValue, DOT) > 0) {
+					String[] attributes = currentValue.split(DOT_SPLIT_REGEX);
 					if(propertyName.equals(attributes[0])) {
 						Map<String, String> nextSelectionMap = getNextSelectionMap(selection, entry);
+						String key = entry.getKey();
 						if(!multipleObjectsReturned(method)) {
-							getJsonObjectFromSpecifiedAttributes(jsonBuilder, method.invoke(object), nextSelectionMap);
+							if(!key.contains(DOT)) {
+								getJsonObjectFromSpecifiedAttributes(jsonBuilder, method.invoke(object), nextSelectionMap);
+							} else {
+								String propertyKeys[] = key.split(DOT_SPLIT_REGEX); 
+								jsonBuilder.add(propertyKeys[0], getJsonObjectFromSpecifiedAttributes(method.invoke(object), nextSelectionMap));
+							}
 						} else {
-							String key = entry.getKey();
-							if(!key.contains("[].")) {
+							if(!key.contains(ARRAY_SYMBOL)) {
 								//Throw exception
 							}
-							String propertyKeys[] = entry.getKey().split("\\[]."); 
+							String propertyKeys[] = entry.getKey().split(ARRAY_SPLIT_REGEX); 
 							jsonBuilder.add(propertyKeys[0], getJsonArrayFromSpecifiedAttributes((List<?>) method.invoke(object), nextSelectionMap));
 						}
 					} else {
@@ -165,8 +184,8 @@ public class JsonUtil {
 					}
 				} else {
 					if(propertyName.equals(entry.getValue())) {
-						if(entry.getKey().contains("[].")) {
-							String propertyKeys[] = entry.getKey().split("\\[]."); 
+						if(entry.getKey().contains(ARRAY_SYMBOL)) {
+							String propertyKeys[] = entry.getKey().split(ARRAY_SPLIT_REGEX); 
 							addToJsonBuilderMethod(jsonBuilder, object, method, 0, propertyKeys[1]);							
 						} else {
 							addToJsonBuilderMethod(jsonBuilder, object, method, 0, entry.getKey());								

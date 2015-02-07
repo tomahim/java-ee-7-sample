@@ -13,6 +13,7 @@ Java EE 7 - Sample App with WildFly
 - add some unit test
 - refactor methods json object from java Map
 - make method / api with shorter name and nicer usage
+- Exception handling
 
 ### Useful links
 

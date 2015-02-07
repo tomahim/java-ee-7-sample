@@ -4,8 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.json.Json;
@@ -96,16 +98,37 @@ public class JsonUtil {
 	    return jsonArrayBuilder;
 	}
 	
-	private static String getNextSelection(String selection) {
-		String[] attributes = selection.split("\\.");
-		
-		String nextSelection = "";
+	private static String getNextValue(String current) {
+		String[] attributes = current.split("\\.");			
+		String nextSelectionValue = "";
 		for(int i = 0; i < attributes.length; i++) {
 			if(i > 0) {
-				nextSelection = nextSelection + attributes[i];
+				nextSelectionValue = nextSelectionValue + attributes[i];
 			}
 			if(i != (attributes.length -1) && i != 0){
-				nextSelection = nextSelection + ".";
+				nextSelectionValue = nextSelectionValue + ".";
+			}
+		}
+		return nextSelectionValue;
+	}
+	
+	private static Map<String, String> getNextSelectionMap(Map<String, String> selection, Entry<String, String> entry) {
+		Map<String, String> nextSelection = new HashMap<String, String>();
+		String key = entry.getKey();
+		String value = entry.getValue();
+		if(!key.contains("[].")) {
+			nextSelection.put(key, getNextValue(value));
+		} else {
+			String propertyKeys[] = key.split("\\[]."); 
+			nextSelection.put(propertyKeys[1], getNextValue(value));
+			String searchProperty = propertyKeys[0];
+			for (Map.Entry<String, String> currentEntry : selection.entrySet()) {
+				if(currentEntry.getKey().contains(searchProperty + "[].")) {
+					String currentPropertyKeys[] = currentEntry.getKey().split("\\[]."); 
+					if(!currentPropertyKeys[1].equals(propertyKeys[1])) {
+						nextSelection.put(currentPropertyKeys[1], getNextValue(currentEntry.getValue()));
+					}
+				}
 			}
 		}
 		return nextSelection;
@@ -116,38 +139,52 @@ public class JsonUtil {
 	}
 	
 	private static JsonObjectBuilder getJsonObjectFromSpecifiedAttributes(JsonObjectBuilder jsonB, Object object, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		JsonObjectBuilder jsonBuilder = null;
-		if(jsonB != null) {
-			jsonBuilder = jsonB;
-		} else {
-			jsonBuilder = Json.createObjectBuilder();
-		}
+		JsonObjectBuilder jsonBuilder = (jsonB != null) ? jsonB : Json.createObjectBuilder();
 		List<Method> methods = getAccessibleGettersMethods(object);
 		for(Method method : methods) {
 			String propertyName = computeAttributeNameFromMethod(method);
-			for (Map.Entry<String, String> entry : selection.entrySet()) {
+			for(Iterator<Map.Entry<String, String>> it = selection.entrySet().iterator(); it.hasNext(); ) {
+			    Map.Entry<String, String> entry = it.next();
 				String currentValue = entry.getValue();
 				if(StringUtils.countMatches(currentValue, ".") > 0) {
 					String[] attributes = currentValue.split("\\.");
 					if(propertyName.equals(attributes[0])) {
-						Map<String, String> currentSelection = new HashMap<String, String>();
-						currentSelection.put(entry.getKey(), getNextSelection(entry.getValue()));
-						getJsonObjectFromSpecifiedAttributes(jsonBuilder, method.invoke(object), currentSelection);
+						Map<String, String> nextSelectionMap = getNextSelectionMap(selection, entry);
+						if(!multipleObjectsReturned(method)) {
+							getJsonObjectFromSpecifiedAttributes(jsonBuilder, method.invoke(object), nextSelectionMap);
+						} else {
+							String key = entry.getKey();
+							if(!key.contains("[].")) {
+								//Throw exception
+							}
+							String propertyKeys[] = entry.getKey().split("\\[]."); 
+							jsonBuilder.add(propertyKeys[0], getJsonArrayFromSpecifiedAttributes((List<?>) method.invoke(object), nextSelectionMap));
+						}
 					} else {
 						//Unknown object
 					}
 				} else {
 					if(propertyName.equals(entry.getValue())) {
-						addToJsonBuilderMethod(jsonBuilder, object, method, 0, entry.getKey());
+						if(entry.getKey().contains("[].")) {
+							String propertyKeys[] = entry.getKey().split("\\[]."); 
+							addToJsonBuilderMethod(jsonBuilder, object, method, 0, propertyKeys[1]);							
+						} else {
+							addToJsonBuilderMethod(jsonBuilder, object, method, 0, entry.getKey());								
+						}
+				        it.remove();
 					}
 				}
 			}
 		}
 		return jsonBuilder;
 	}
-	
+
 	private static JsonArrayBuilder getJsonArrayFromSpecifiedAttributes(List<?> list, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+		return getJsonArrayFromSpecifiedAttributes(null, list, selection);
+	}
+	
+	private static JsonArrayBuilder getJsonArrayFromSpecifiedAttributes(JsonArrayBuilder jsonB, List<?> list, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		JsonArrayBuilder jsonArrayBuilder = (jsonB != null) ? jsonB : Json.createArrayBuilder();
 	    for(Object o : list) {
 	        try {
 				jsonArrayBuilder.add(getJsonObjectFromSpecifiedAttributes(o, selection));

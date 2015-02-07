@@ -43,6 +43,8 @@ public class CountryRest {
 		selection.put("name", "name");
 		selection.put("regionId", "region.id");
 		selection.put("regionName", "region.name");
+		selection.put("cities[].name", "cities.name");
+		selection.put("cities[].id", "cities.id");
 		return JsonUtil.toJson(country, selection);
 	}
 		

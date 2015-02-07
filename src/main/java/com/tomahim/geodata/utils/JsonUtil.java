@@ -15,16 +15,11 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-
-import org.apache.commons.lang3.StringUtils;
-
 public class JsonUtil {
 	
 	final static int DEFAULT_MAX_DEPTH = 1;
 	
-	final static String ARRAY_SYMBOL = "[].";
 	final static String DOT = ".";
-	final static String ARRAY_SPLIT_REGEX = "\\[].";
 	final static String DOT_SPLIT_REGEX = "\\."; 
 	
 	private static String getPropertyFromMethod(Method method) {
@@ -145,7 +140,7 @@ public class JsonUtil {
 			for(Iterator<Map.Entry<String, String>> it = selection.entrySet().iterator(); it.hasNext(); ) {
 			    Map.Entry<String, String> entry = it.next();
 				String currentValue = entry.getValue();
-				if(StringUtils.countMatches(currentValue, DOT) > 0) {
+				if(currentValue.contains(DOT)) {
 					String[] values = currentValue.split(DOT_SPLIT_REGEX);
 					if(propertyName.equals(values[0])) {
 						Map<String, String> nextSelectionMap = getNextSelectionMap(selection, entry);
@@ -155,7 +150,7 @@ public class JsonUtil {
 							if(!multipleObjectsReturned(method)) { //Simple object to parse
 								jsonBuilder.add(propertyKeys[0], getJsonObjectFromSpecifiedAttributes(method.invoke(object), nextSelectionMap));
 							} else {  //Collection of objects
-								//TODO : make it compatible not only for List
+								//TODO : make it compatible not only for List (Collection interface ?)
 								jsonBuilder.add(propertyKeys[0], getJsonArrayFromSpecifiedAttributes((List<?>) method.invoke(object), nextSelectionMap));								
 							}
 						} else {
@@ -173,7 +168,7 @@ public class JsonUtil {
 		return jsonBuilder;
 	}
 
-	//TODO : make it compatible not only for List
+	//TODO : make it compatible not only for List (Collection interface ?)
 	private static JsonArrayBuilder getJsonArrayFromSpecifiedAttributes(List<?> list, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		return getJsonArrayFromSpecifiedAttributes(null, list, selection);
 	}

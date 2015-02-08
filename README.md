@@ -17,7 +17,7 @@ Java EE 7 - Sample App with WildFly
 ##### Json utility class dev
 
 - add some unit test
-- refactor methods json object from java Map
+- Refactor by using a recursive data strucutre instead of map (see http://www.dreamincode.net/forums/topic/198160-data-structures-recursion-stacks-and-trees/)
 - make method / api with shorter name and nicer usage
 - Exception handling
 

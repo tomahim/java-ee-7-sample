@@ -28,7 +28,7 @@ public class RegionRest {
 	@GET
 	public JsonArray getAll() {
 		List<Region> regions = regionService.getAll();
-		return JsonUtil.toJsonArray(regions, "id", "countries.name");
+		return JsonUtil.toJsonArray(regions, "id", "name");
 	}
 	
 	@GET

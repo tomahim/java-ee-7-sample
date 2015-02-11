@@ -1,5 +1,6 @@
 package com.tomahim.geodata.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,16 +16,19 @@ public class JsonNode {
 	public JsonNode(String key, String valuePath) {
 		this.key = key;
 		this.valuePath = valuePath;
+		this.nodes = new ArrayList<JsonNode>();
 	}
 
 	public JsonNode(String key) {
 		this.key = key;
 		this.valuePath = null;
+		this.nodes = new ArrayList<JsonNode>();
 	}
 	
 	public JsonNode() {
 		this.key = null;
 		this.valuePath = null;
+		this.nodes = new ArrayList<JsonNode>();
 	}
 
 	public void addNode(JsonNode node) {
@@ -65,7 +69,26 @@ public class JsonNode {
 		this.valuePath = valuePath;
 	}
 	
+	public boolean isRoot() {
+		return key == null && valuePath == null;
+	}
+	
 	public boolean isLeaf() {
 		return key != null && valuePath != null && nodes.size() == 0;
+	}
+	
+	public String toString() {
+		if(isLeaf()) {
+			return "{" + key + " : " + valuePath + "}";
+		} else {
+			String nodeString = "";
+			for(int i = 0; i < nodes.size(); i++) {
+				nodeString += nodes.get(i);
+				if(i != nodes.size()) {
+					nodeString += ", ";
+				}
+			}
+			return "{" + key + " : " + nodeString + "}";
+ 		}
 	}
 }

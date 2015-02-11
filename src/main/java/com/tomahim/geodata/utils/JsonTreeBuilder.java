@@ -23,20 +23,13 @@ public class JsonTreeBuilder {
 		selection.put("region.name", "region.name");
 		selection.put("cities.name", "cities.name");
 		selection.put("cities.id", "cities.id");
-		
-		JsonNode jsonTreeExample = new JsonNode(); 
-		jsonTreeExample.addNode(new JsonNode("id", "id"));
-		jsonTreeExample.addNode(new JsonNode("name", "name"));
-		
-		JsonNode region = new JsonNode("region");
-		region.addNode(new JsonNode("id", "region.id"));
-		
-		jsonTreeExample.addNode(region);
-		
-
+		selection.put("cities.id", "cities.id2");
+		selection.put("region.countries.cities.name", "cities.name2");
 		JsonNode jsonTree = new JsonNode(); 
-		
+
 		constructTreeFromMap(jsonTree, selection);
+		
+		System.out.println("jsonTree " + jsonTree);
 		
 	}
 	
@@ -49,7 +42,7 @@ public class JsonTreeBuilder {
 		}
 	}
 	
-	public JsonNode findNode(JsonNode node, String keyPath) {
+	/*public static JsonNode findNode(JsonNode node, String keyPath) {
 		if(keyPath.contains(".")) {
 			String[] keys = keyPath.split(DOT_SPLIT_REGEX);
 			JsonNode found = node.findNode(keys[0]);
@@ -61,17 +54,25 @@ public class JsonTreeBuilder {
 		} else {
 			return node.findNode(keyPath);
 		}
-	}
+	}*/
 	
 	private static JsonNode constructTreeFromMap(JsonNode node, Map<String, String> selection) {
 		for(Map.Entry<String, String> entry : selection.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
 			if(key.contains(DOT)) {
-				String[] attributes = value.split(DOT_SPLIT_REGEX);
+				String[] attributes = key.split(DOT_SPLIT_REGEX);
+				JsonNode found = node.findNode(attributes[0]);
 				Map<String, String> nextMap = new HashMap<String, String>();
-				nextMap.put(getNextValue(key), value);
-				node.addNode(constructTreeFromMap(new JsonNode(attributes[0]), nextMap));
+				String nextKey = getNextValue(key);
+				nextMap.put(nextKey, value);
+				if(found == null) {
+					JsonNode newNode = new JsonNode(attributes[0]);
+					node.addNode(newNode);
+					constructTreeFromMap(newNode, nextMap);
+				} else {
+					constructTreeFromMap(found, nextMap);					
+				}
 			} else {
 				node.addNode(new JsonNode(key, value));
 			}			

@@ -168,6 +168,19 @@ public class JsonUtil {
 		return jsonBuilder;
 	}
 	
+	private static JsonArrayBuilder resolveArrayValuePath(JsonArrayBuilder jsonArrayBuilder, List<?> list, String key, String valuePath) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		JsonArrayBuilder jsonB = (jsonArrayBuilder != null) ? jsonArrayBuilder : Json.createArrayBuilder();
+	    for(Object o : list) {
+	        try {
+	        	jsonB.add(resolveValuePath(Json.createObjectBuilder(), o, key, valuePath));
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				e.printStackTrace();
+			}
+	    }
+	    return jsonB;
+	}
+	
 	private static JsonObjectBuilder resolveValuePath(JsonObjectBuilder jsonBuilder, Object object, String key, String valuePath) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		List<Method> methods = getAccessibleGettersMethods(object);
 		for(Method method : methods) {
@@ -182,7 +195,7 @@ public class JsonUtil {
 					} else {  //Collection of objects
 						//TODO : make it compatible not only for List (Collection interface ?)
 						//jsonBuilder.add(key, resolveValuePath((List<?>) method.invoke(object), key, getNextValue(valuePath)));
-						resolveValuePath(jsonBuilder, (List<?>) method.invoke(object), key, nextValue);
+						jsonBuilder.add(key, resolveArrayValuePath(null, (List<?>) method.invoke(object), key, nextValue));
 					}
 				}
 			} else {
@@ -205,7 +218,7 @@ public class JsonUtil {
 					//add attribute to jsonB + calculate value of valuePath	
 					resolveValuePath(jsonB, object, node.getKey(), node.getValuePath());			
 				} else {
-					getJsonObjectFromSpecifiedAttributes(jsonB, object, node);
+					jsonB.add(node.getKey(), getJsonObjectFromSpecifiedAttributes(null, object, node));
 				}
 			}
 		}

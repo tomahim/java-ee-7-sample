@@ -33,15 +33,6 @@ public class JsonTreeBuilder {
 		
 	}
 	
-	private static String getNextValue(String value) {
-		if(value.contains(DOT)) {
-			String[] attributes = value.split(DOT_SPLIT_REGEX);
-			return value.substring(attributes[0].length() + DOT.length(), value.length());
-		} else {
-			return value;
-		}
-	}
-	
 	/*public static JsonNode findNode(JsonNode node, String keyPath) {
 		if(keyPath.contains(".")) {
 			String[] keys = keyPath.split(DOT_SPLIT_REGEX);
@@ -56,7 +47,7 @@ public class JsonTreeBuilder {
 		}
 	}*/
 	
-	private static JsonNode constructTreeFromMap(JsonNode node, Map<String, String> selection) {
+	public static JsonNode constructTreeFromMap(JsonNode node, Map<String, String> selection) {
 		for(Map.Entry<String, String> entry : selection.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
@@ -64,8 +55,7 @@ public class JsonTreeBuilder {
 				String[] attributes = key.split(DOT_SPLIT_REGEX);
 				JsonNode found = node.findNode(attributes[0]);
 				Map<String, String> nextMap = new HashMap<String, String>();
-				String nextKey = getNextValue(key);
-				nextMap.put(nextKey, value);
+				nextMap.put(JsonUtil.getNextValue(key), value);
 				if(found == null) {
 					JsonNode newNode = new JsonNode(attributes[0]);
 					node.addNode(newNode);

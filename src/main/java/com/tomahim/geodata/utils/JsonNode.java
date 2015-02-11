@@ -35,15 +35,6 @@ public class JsonNode {
 		nodes.add(node);
 	}
 	
-	private static String getNextValue(String value) {
-		if(value.contains(".")) {
-			String[] attributes = value.split("\\.");
-			return value.substring(attributes[0].length() + 1, value.length());
-		} else {
-			return value;
-		}
-	}
-	
 	public JsonNode findNode(String key) {
 		for(JsonNode node : nodes) {
 			if(node.getKey().equals(key)) {
@@ -69,6 +60,14 @@ public class JsonNode {
 		this.valuePath = valuePath;
 	}
 	
+	public List<JsonNode> getNodes() {
+		return nodes;
+	}
+
+	public void setNodes(List<JsonNode> nodes) {
+		this.nodes = nodes;
+	}
+
 	public boolean isRoot() {
 		return key == null && valuePath == null;
 	}
@@ -84,7 +83,10 @@ public class JsonNode {
 			String nodeString = "";
 			for(int i = 0; i < nodes.size(); i++) {
 				nodeString += nodes.get(i);
-				if(i != nodes.size()) {
+				if(nodes.get(i).isLeaf()) {
+					nodeString += "(true)";
+				}
+				if(i != (nodes.size() -1)) {
 					nodeString += ", ";
 				}
 			}

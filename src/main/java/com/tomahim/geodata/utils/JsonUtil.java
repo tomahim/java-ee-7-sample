@@ -98,7 +98,7 @@ public class JsonUtil {
 	    return jsonArrayBuilder;
 	}
 	
-	private static String getNextValue(String value) {
+	public static String getNextValue(String value) {
 		if(value.contains(DOT)) {
 			String[] attributes = value.split(DOT_SPLIT_REGEX);
 			return value.substring(attributes[0].length() + DOT.length(), value.length());
@@ -167,6 +167,50 @@ public class JsonUtil {
 		}
 		return jsonBuilder;
 	}
+	
+	private static JsonObjectBuilder resolveValuePath(JsonObjectBuilder jsonBuilder, Object object, String key, String valuePath) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		List<Method> methods = getAccessibleGettersMethods(object);
+		for(Method method : methods) {
+			String propertyName = computeAttributeNameFromMethod(method);
+			if(valuePath.contains(DOT)) {
+				String[] values = valuePath.split(DOT_SPLIT_REGEX);
+				if(propertyName.equals(values[0])) {
+					String nextValue = getNextValue(valuePath);
+					if(!multipleObjectsReturned(method)) { //Simple object to parse
+						//jsonBuilder.add(key, resolveValuePath(method.invoke(object), key, getNextValue(valuePath)));
+						resolveValuePath(jsonBuilder, method.invoke(object), key, nextValue);
+					} else {  //Collection of objects
+						//TODO : make it compatible not only for List (Collection interface ?)
+						//jsonBuilder.add(key, resolveValuePath((List<?>) method.invoke(object), key, getNextValue(valuePath)));
+						resolveValuePath(jsonBuilder, (List<?>) method.invoke(object), key, nextValue);
+					}
+				}
+			} else {
+				if(propertyName.equals(valuePath)) {
+					addToJsonBuilderMethod(jsonBuilder, object, method, 0, key);					
+				}				
+			}			
+		}
+		return jsonBuilder;
+	}
+	
+	private static JsonObjectBuilder getJsonObjectFromSpecifiedAttributes(JsonObjectBuilder jsonBuilder, Object object, JsonNode jsonNode) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		JsonObjectBuilder jsonB = (jsonBuilder != null) ? jsonBuilder : Json.createObjectBuilder();
+		if(jsonNode.isLeaf()) {
+			//add attribute to jsonB + calculate value of valuePath
+			resolveValuePath(jsonB, object, jsonNode.getKey(), jsonNode.getValuePath());
+		} else {
+			for(JsonNode node : jsonNode.getNodes()) {
+				if(node.isLeaf()) {
+					//add attribute to jsonB + calculate value of valuePath	
+					resolveValuePath(jsonB, object, node.getKey(), node.getValuePath());			
+				} else {
+					getJsonObjectFromSpecifiedAttributes(jsonB, object, node);
+				}
+			}
+		}
+		return jsonB;
+	}
 
 	//TODO : make it compatible not only for List (Collection interface ?)
 	private static JsonArrayBuilder getJsonArrayFromSpecifiedAttributes(List<?> list, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -211,7 +255,9 @@ public class JsonUtil {
 	
 	public static JsonObject toJson(Object o, Map<String, String> selection) {
 		try {
-			return getJsonObjectFromSpecifiedAttributes(o, selection).build();
+			//return getJsonObjectFromSpecifiedAttributes(o, selection).build();
+			JsonNode rootNode = new JsonNode();
+			return getJsonObjectFromSpecifiedAttributes(null, o, JsonTreeBuilder.constructTreeFromMap(rootNode, selection)).build();
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			// TODO Auto-generated catch block

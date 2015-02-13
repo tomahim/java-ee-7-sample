@@ -69,7 +69,11 @@ public class ReflectUtil {
 	}
 	
 	public static String getPropertyFromMethod(Method method) {
-		return StringUtil.lowercaseFirstLetter(method.getName().substring(3, method.getName().length()));
+		String name = method.getName();
+		if(name.startsWith("get")) {
+			return StringUtil.lowercaseFirstLetter(name.substring(3, method.getName().length()));
+		}
+		return name; 
 	}
 	
 	public static List<Method> getAccessibleGettersMethods(Object o) {

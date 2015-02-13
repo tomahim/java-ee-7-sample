@@ -1,4 +1,4 @@
-package com.tomahim.geodata.utils;
+package com.tomahim.geodata.utils.jsonUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +55,7 @@ public class JsonTreeBuilder {
 				String[] attributes = key.split(DOT_SPLIT_REGEX);
 				JsonNode found = node.findNode(attributes[0]);
 				Map<String, String> nextMap = new HashMap<String, String>();
-				nextMap.put(JsonUtil.getNextValue(key), value);
+				nextMap.put(StringUtil.getNextValue(key), value);
 				if(found == null) {
 					JsonNode newNode = new JsonNode(attributes[0]);
 					node.addNode(newNode);

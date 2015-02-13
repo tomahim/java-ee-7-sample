@@ -17,7 +17,7 @@ import com.google.code.geocoder.model.GeocodeResponse;
 import com.tomahim.geodata.api.google.GoogleGeocodeApi;
 import com.tomahim.geodata.entities.City;
 import com.tomahim.geodata.services.CityService;
-import com.tomahim.geodata.utils.JsonUtil;
+import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
 
 @Path("cities")
 @Produces("application/json")

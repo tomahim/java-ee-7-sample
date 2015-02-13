@@ -16,7 +16,7 @@ import com.tomahim.geodata.entities.City;
 import com.tomahim.geodata.entities.Country;
 import com.tomahim.geodata.services.CityService;
 import com.tomahim.geodata.services.CountryService;
-import com.tomahim.geodata.utils.JsonUtil;
+import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
 
 @Path("countries") 
 @Produces("application/json")

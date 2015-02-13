@@ -1,4 +1,4 @@
-package com.tomahim.geodata.utils;
+package com.tomahim.geodata.utils.jsonUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

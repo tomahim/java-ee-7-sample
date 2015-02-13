@@ -16,7 +16,7 @@ import javax.ws.rs.Produces;
 
 import com.tomahim.geodata.entities.Region;
 import com.tomahim.geodata.services.RegionService;
-import com.tomahim.geodata.utils.JsonUtil;
+import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
 
 @Path("regions")
 @Produces("application/json")

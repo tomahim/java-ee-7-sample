@@ -1,10 +1,11 @@
-package com.tomahim.geodata.utils;
+package com.tomahim.geodata.utils.jsonUtil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ReflectUtil {
@@ -65,5 +66,23 @@ public class ReflectUtil {
 	       }
 	   }
 	   return list;
+	}
+	
+	public static String getPropertyFromMethod(Method method) {
+		return StringUtil.lowercaseFirstLetter(method.getName().substring(3, method.getName().length()));
+	}
+	
+	public static List<Method> getAccessibleGettersMethods(Object o) {
+		List<Method> methodsAccessible = new ArrayList<Method>();
+		if(o != null && o.getClass() != null) {
+			ArrayList<Method> methods = ReflectUtil.findGetters(o.getClass());
+			for (Method method : methods) {
+				method.setAccessible(true);
+				if(method.isAccessible()) {
+					methodsAccessible.add(method);
+				}
+			}
+		}		
+		return methodsAccessible;
 	}
 }

@@ -12,7 +12,7 @@ import javax.ws.rs.Produces;
 
 import com.tomahim.geodata.entities.Subregion;
 import com.tomahim.geodata.services.SubregionService;
-import com.tomahim.geodata.utils.JsonUtil;
+import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
 
 @Path("subregions")
 @Produces("application/json")

@@ -107,67 +107,6 @@ public class JsonUtil {
 		}
 	}
 	
-	private static Map<String, String> getNextSelectionMap(Map<String, String> selection, Entry<String, String> entry) {
-		Map<String, String> nextSelection = new HashMap<String, String>();
-		String key = entry.getKey();
-		String value = entry.getValue();
-		if(!key.contains(DOT)) {
-			nextSelection.put(key, getNextValue(value));
-		} else { 			
-			nextSelection.put(getNextValue(key), getNextValue(value));
-			String propertyKeys[] = key.split(DOT_SPLIT_REGEX);
-			for (Map.Entry<String, String> currentEntry : selection.entrySet()) {
-				if(currentEntry.getKey().contains(propertyKeys[0] + DOT)) {
-					String currentPropertyKeys[] = currentEntry.getKey().split(DOT_SPLIT_REGEX); 
-					if(!currentPropertyKeys[1].equals(propertyKeys[1])) {
-						nextSelection.put(getNextValue(currentEntry.getKey()), getNextValue(currentEntry.getValue()));
-					}
-				}
-			}
-		}
-		return nextSelection;
-	}
-		
-	private static JsonObjectBuilder getJsonObjectFromSpecifiedAttributes(Object object, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return getJsonObjectFromSpecifiedAttributes(null, object, selection);
-	}
-	
-	private static JsonObjectBuilder getJsonObjectFromSpecifiedAttributes(JsonObjectBuilder jsonB, Object object, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		JsonObjectBuilder jsonBuilder = (jsonB != null) ? jsonB : Json.createObjectBuilder();
-		List<Method> methods = getAccessibleGettersMethods(object);
-		for(Method method : methods) {
-			String propertyName = computeAttributeNameFromMethod(method);
-			for(Iterator<Map.Entry<String, String>> it = selection.entrySet().iterator(); it.hasNext(); ) {
-			    Map.Entry<String, String> entry = it.next();
-				String currentValue = entry.getValue();
-				if(currentValue.contains(DOT)) {
-					String[] values = currentValue.split(DOT_SPLIT_REGEX);
-					if(propertyName.equals(values[0])) {
-						Map<String, String> nextSelectionMap = getNextSelectionMap(selection, entry);
-						String key = entry.getKey();
-						if(key.contains(DOT)) {
-							String propertyKeys[] = key.split(DOT_SPLIT_REGEX); 
-							if(!multipleObjectsReturned(method)) { //Simple object to parse
-								jsonBuilder.add(propertyKeys[0], getJsonObjectFromSpecifiedAttributes(method.invoke(object), nextSelectionMap));
-							} else {  //Collection of objects
-								//TODO : make it compatible not only for List (Collection interface ?)
-								jsonBuilder.add(propertyKeys[0], getJsonArrayFromSpecifiedAttributes((List<?>) method.invoke(object), nextSelectionMap));								
-							}
-						} else {
-							getJsonObjectFromSpecifiedAttributes(jsonBuilder, method.invoke(object), nextSelectionMap);							
-						}
-					}
-				} else { //Stop condition
-					if(propertyName.equals(entry.getValue())) {
-						addToJsonBuilderMethod(jsonBuilder, object, method, 0, entry.getKey());	
-				        it.remove();
-					}
-				}
-			}
-		}
-		return jsonBuilder;
-	}
-	
 	private static JsonArrayBuilder resolveArrayValuePath(JsonArrayBuilder jsonArrayBuilder, List<?> list, String key, String valuePath) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		JsonArrayBuilder jsonB = (jsonArrayBuilder != null) ? jsonArrayBuilder : Json.createArrayBuilder();
 	    for(Object o : list) {
@@ -190,11 +129,9 @@ public class JsonUtil {
 				if(propertyName.equals(values[0])) {
 					String nextValue = getNextValue(valuePath);
 					if(!multipleObjectsReturned(method)) { //Simple object to parse
-						//jsonBuilder.add(key, resolveValuePath(method.invoke(object), key, getNextValue(valuePath)));
 						resolveValuePath(jsonBuilder, method.invoke(object), key, nextValue);
 					} else {  //Collection of objects
 						//TODO : make it compatible not only for List (Collection interface ?)
-						//jsonBuilder.add(key, resolveValuePath((List<?>) method.invoke(object), key, getNextValue(valuePath)));
 						jsonBuilder.add(key, resolveArrayValuePath(null, (List<?>) method.invoke(object), key, nextValue));
 					}
 				}
@@ -207,7 +144,7 @@ public class JsonUtil {
 		return jsonBuilder;
 	}
 	
-	private static JsonObjectBuilder getJsonObjectFromSpecifiedAttributes(JsonObjectBuilder jsonBuilder, Object object, JsonNode jsonNode) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private static JsonObjectBuilder getJsonObjectFromTree(JsonObjectBuilder jsonBuilder, Object object, JsonNode jsonNode) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		JsonObjectBuilder jsonB = (jsonBuilder != null) ? jsonBuilder : Json.createObjectBuilder();
 		if(jsonNode.isLeaf()) {
 			//add attribute to jsonB + calculate value of valuePath
@@ -218,31 +155,18 @@ public class JsonUtil {
 					//add attribute to jsonB + calculate value of valuePath	
 					resolveValuePath(jsonB, object, node.getKey(), node.getValuePath());			
 				} else {
-					jsonB.add(node.getKey(), getJsonObjectFromSpecifiedAttributes(null, object, node));
+					jsonB.add(node.getKey(), getJsonObjectFromTree(null, object, node));
 				}
 			}
 		}
 		return jsonB;
-	}
-
-	//TODO : make it compatible not only for List (Collection interface ?)
-	private static JsonArrayBuilder getJsonArrayFromSpecifiedAttributes(List<?> list, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return getJsonArrayFromSpecifiedAttributes(null, list, selection);
-	}
+	}	
 	
-	private static JsonArrayBuilder getJsonArrayFromSpecifiedAttributes(JsonArrayBuilder jsonB, List<?> list, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		JsonArrayBuilder jsonArrayBuilder = (jsonB != null) ? jsonB : Json.createArrayBuilder();
-	    for(Object o : list) {
-	        try {
-	        	Map<String, String> map = new HashMap<String, String>(selection);
-				jsonArrayBuilder.add(getJsonObjectFromSpecifiedAttributes(o, map));
-			} catch (IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
-				e.printStackTrace();
-			}
-	    }
-	    return jsonArrayBuilder;
-	}
+	/* API Definition */
+	
+	/*
+	 * Getting all fields with getter methods 
+	 */
 	
 	public static JsonObject toJson(Object object, int maxDepth) {
 		try {
@@ -266,11 +190,26 @@ public class JsonUtil {
 	    return getJsonArrayBuilderFomJavaList(list, DEFAULT_MAX_DEPTH).build();
 	}
 	
+	/*
+	 * Using map selection
+	 */
+	
+	private static JsonArray toJsonArrayFromMap(List<?> list, Map<String, String> map) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+	    for(Object o : list) {	        
+			jsonArrayBuilder.add(toJsonFromMap(o, map));
+	    }
+	    return jsonArrayBuilder.build();
+	}
+	
+	private static JsonObject toJsonFromMap(Object o, Map<String, String> selection) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		JsonNode rootNode = new JsonNode();
+		return getJsonObjectFromTree(null, o, JsonTreeBuilder.constructTreeFromMap(rootNode, selection)).build();
+	}
+	
 	public static JsonObject toJson(Object o, Map<String, String> selection) {
 		try {
-			//return getJsonObjectFromSpecifiedAttributes(o, selection).build();
-			JsonNode rootNode = new JsonNode();
-			return getJsonObjectFromSpecifiedAttributes(null, o, JsonTreeBuilder.constructTreeFromMap(rootNode, selection)).build();
+			return toJsonFromMap(o, selection);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			// TODO Auto-generated catch block
@@ -281,7 +220,7 @@ public class JsonUtil {
 	
 	public static JsonArray toJsonArray(List<?> list, Map<String, String> selection) {
 		try {
-			return getJsonArrayFromSpecifiedAttributes(list, selection).build();
+		return toJsonArrayFromMap(list, selection);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			// TODO Auto-generated catch block
@@ -289,6 +228,10 @@ public class JsonUtil {
 		}
 		return null;
 	}	
+	
+	/*
+	 * Using Set
+	 */
 	
 	private static Map<String, String> transformSetToMap(Set<String> set) {
 		Map<String, String> map  = new HashMap<String, String>();
@@ -301,7 +244,7 @@ public class JsonUtil {
 	public static JsonObject toJson(Object o, Set<String> attributes) {
 		Map<String, String> map  = transformSetToMap(attributes);
 		try {
-			return getJsonObjectFromSpecifiedAttributes(o, map).build();
+			return toJsonFromMap(o, map);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			// TODO Auto-generated catch block
@@ -313,7 +256,7 @@ public class JsonUtil {
 	public static JsonArray toJsonArray(List<?> list, Set<String> attributes) {
 		Map<String, String> map  = transformSetToMap(attributes);
 		try {
-			return getJsonArrayFromSpecifiedAttributes(list, map).build();
+			return toJsonArrayFromMap(list, map);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			// TODO Auto-generated catch block
@@ -321,6 +264,10 @@ public class JsonUtil {
 		}
 		return null;
 	}		
+	
+	/*
+	 * Using varargs
+	 */
 	
 	private static Map<String, String> transformVarargsToMap(String[] values) {
 		if (values.length == 0) {
@@ -335,9 +282,9 @@ public class JsonUtil {
 	}
 	
 	public static JsonObject toJson(Object o, String... attributes) {
-		Map<String, String> map  = transformVarargsToMap(attributes);
+		Map<String, String> map = transformVarargsToMap(attributes);
 		try {
-			return getJsonObjectFromSpecifiedAttributes(o, map).build();
+			return toJsonFromMap(o, map);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			// TODO Auto-generated catch block
@@ -349,7 +296,7 @@ public class JsonUtil {
 	public static JsonArray toJsonArray(List<?> list, String... attributes) {
 		Map<String, String> map  = transformVarargsToMap(attributes);
 		try {
-			return getJsonArrayFromSpecifiedAttributes(list, map).build();
+			return toJsonArrayFromMap(list, map);
 		} catch (IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			// TODO Auto-generated catch block

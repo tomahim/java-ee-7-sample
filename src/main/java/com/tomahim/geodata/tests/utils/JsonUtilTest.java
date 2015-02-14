@@ -2,9 +2,13 @@ package com.tomahim.geodata.tests.utils;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.json.JsonObject;
 import javax.json.JsonValue.ValueType;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
@@ -19,6 +23,12 @@ public class JsonUtilTest {
 		private String privateInfo;
 		
 		private Boolean isMale;
+		
+		private List<Person> friends;
+		
+		public Person() {
+			this.friends = new ArrayList<JsonUtilTest.Person>();
+		}
 
 		public Integer getId() {
 			return id;
@@ -42,7 +52,19 @@ public class JsonUtilTest {
 
 		public void setIsMale(Boolean isMale) {
 			this.isMale = isMale;
+		}
+
+		public List<Person> getFriends() {
+			return friends;
+		}
+
+		public void setFriends(List<Person> friends) {
+			this.friends = friends;
 		}		
+		
+		public void addFriends(Person friend) {
+			this.friends.add(friend);
+		}
 	}
 
 	@Test
@@ -69,6 +91,26 @@ public class JsonUtilTest {
 		assertTrue(jsonObject.get("isMale").equals(p.getIsMale()));
 		
 		assertNotNull(jsonObject);
+	}
+	
+	@Test
+	public void testJsonContructionDepth1() {
+		Person p1 = new Person();
+		p1.setId(1);
+		p1.setName("Toto");
+		p1.setIsMale(true);
+		
+		Person p2 = new Person();
+		p2.setId(2);
+		p2.setName("Julia");
+		p2.setIsMale(false);
+		
+		p1.addFriends(p2);
+		
+		JsonObject jsonObject = JsonUtil.toJson(p1, 1);
+		
+		assertTrue(jsonObject.containsKey("friends"));		
+		assertTrue(jsonObject.get("friends").getValueType().equals(ValueType.ARRAY));
 	}
 	
 }

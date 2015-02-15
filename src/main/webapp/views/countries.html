@@ -1,34 +1,27 @@
-<div class="row countries-list">
-    <div class="col-lg-6">
-        <h1>Countries</h1>
-        <ul class="regions-nav nav nav-pills" role="tablist">
-		  <li role="presentation" ng-class="{'active' : activeRegion === 'all'}" ng-click="setActive('all')">
-		  	<a> All <span class="badge">{{countries.length}}</span></a>
-		  </li>
-		  <li role="presentation" ng-repeat="region in regions" ng-click="setActive(region.id)" ng-class="{'active': isActive(region.id)}">
-		  	<a>{{region.name}} <span class="badge">{{(countries | regionFilter : region.id).length}}</span></a>
-		  </li>
-		</ul>
-		<input placeholder="Nom d'un pays" class="form-control search-country-name" ng-model="searchName"></input>
+<h1>Countries</h1>
+<ul class="countries-list regions-nav nav nav-pills" role="tablist">
+	<li role="presentation" ng-class="{'active' : activeRegion === 'all'}" ng-click="setActive('all')">
+		<a> All <span class="badge">{{countries.length}}</span></a>
+	</li>
+	<li role="presentation" ng-repeat="region in regions" ng-click="setActive(region.id)" ng-class="{'active': isActive(region.id)}">
+		<a>{{region.name}} <span class="badge">{{(countries | regionFilter : region.id).length}}</span></a>
+	</li>
+</ul>
+<input placeholder="Nom d'un pays" class="form-control search-country-name" ng-model="searchName"></input>
 		
-        <table class="table table-striped table-hover table-condensed" ng-init="start=0;end=20">
-        	<tr ng-repeat="country in countries | filter:searchName | regionFilter: activeRegion | slice:start:end" ng-click="selectCountry(country)">
-        		<td>
-        			<img src="images/flags/png/{{country.cca2}}-24.png" />
-        			{{country.name}} - {{country.cca2}}
-        		</td>
-        		<td>
-        			{{country.subregion.name}}
-        		</td>
-        		<td>
-        			<a>Détail</a>
-        		</td>
-        	</tr>
-        </table>
-        <div ng-show="start > 0" class="btn btn-link pull-left" ng-click="prev()">Précédent</div>
-        <div class="btn btn-link pull-right" ng-show="(countries | filter:searchName | regionFilter: activeRegion | slice:start:end).length === 20" ng-click="next()">Suivant</div>
-    </div>
-    <div class="col-lg-6">
-    	 <div id="map"></div>
-    </div>
-</div>
+<table class="table table-striped table-hover table-condensed" ng-init="start=0;end=20">
+	<tr ng-repeat="country in countries | filter:searchName | regionFilter: activeRegion | slice:start:end" ng-click="selectCountry(country)">
+		<td>
+			<img src="images/flags/png/{{country.cca2}}-24.png" />
+			{{country.name}} - {{country.cca2}}
+		</td>
+		<td>
+			{{country.subregion.name}}
+		</td>
+		<td>
+			<a>Détail</a>
+		</td>
+	</tr>
+</table>
+ <div ng-show="start > 0" class="btn btn-link pull-left" ng-click="prev()">Précédent</div>
+ <div class="btn btn-link pull-right" ng-show="(countries | filter:searchName | regionFilter: activeRegion | slice:start:end).length === 20" ng-click="next()">Suivant</div>

@@ -1,4 +1,6 @@
-angular.module('geodata').controller('CountriesCtrl', function($scope, $q, CountryDA, RegionDA) {
+angular.module('geodata').controller('CountriesCtrl', function($scope, $q, CountryDA, RegionDA, MapSvc) {
+	
+	var mapSvc = MapSvc;
 	
 	$scope.activeRegion = 'all';
 	
@@ -10,18 +12,12 @@ angular.module('geodata').controller('CountriesCtrl', function($scope, $q, Count
 		$scope.regions = result.regions;
 	});
 	
-	var map = L.map('map').setView([51.505, -0.09], 2);
 	
-	L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-	    attribution: '',
-	    maxZoom: 18
-	}).addTo(map);
-
 	var layerGeoJson = L.geoJson();
 	var capitalMarker = null;
 	$scope.selectCountry = function(country) {
 		if(capitalMarker != null) {
-			map.removeLayer(capitalMarker);
+			mapSvc.map.removeLayer(capitalMarker);
 		}
 
 		var capital = _.where(country.cities, function(city) {
@@ -29,7 +25,7 @@ angular.module('geodata').controller('CountriesCtrl', function($scope, $q, Count
 		})[0];
 		
 		var capitalCoordinates = [capital.lat, capital.lng];
-		map.setView(capitalCoordinates, 5);
+		mapSvc.map.setView(capitalCoordinates, 5);
 		
 		capitalMarker = L.marker(capitalCoordinates);
 		capitalMarker.bindPopup(
@@ -37,12 +33,12 @@ angular.module('geodata').controller('CountriesCtrl', function($scope, $q, Count
 				+ '<b>' + country.name + '</b>'
 				+ '<br>'
 				+ capital.name).openPopup();
-		capitalMarker.addTo(map);
+		capitalMarker.addTo(mapSvc.map);
 		
 		CountryDA.getFeatureGeometry(country.cca2).then(function(feature) {	
 			layerGeoJson.clearLayers();
 			layerGeoJson.addData(feature);
-			layerGeoJson.addTo(map);
+			layerGeoJson.addTo(mapSvc.map);
 		});
 	};
 	

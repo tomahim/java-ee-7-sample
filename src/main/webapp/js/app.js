@@ -3,10 +3,20 @@ angular.module('geodata', ['ui.router', 'restangular', 'geodata-utils'])
 	
 	  $urlRouterProvider.otherwise("/countries");
 	  
+	  var mainMapView = {
+		templateUrl : 'views/main-map.html',
+		controller : 'MapCtrl'
+	  };
+	  
 	  $stateProvider
 	    .state('countries', {
 	      url: "/countries",
-	      templateUrl: "views/countries.html",
-	      controller: "CountriesCtrl"
+	      views : {
+	    	  "LeftContainer" : {
+	    	      templateUrl: "views/countries.html",
+	    	      controller: "CountriesCtrl"
+	    	  },
+	    	  "RightContainer" : mainMapView
+	      }
 	  });
 });

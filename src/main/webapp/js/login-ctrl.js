@@ -1,6 +1,10 @@
 angular.module('geodata').controller('LoginCtrl', function($scope, LoginDA) {
 	
-	console.log('ctrl')
+	
+	$scope.login = function(username, password) {
+		LoginDA.login(username, password);
+	};
+	
 	LoginDA.login();
 	
 });

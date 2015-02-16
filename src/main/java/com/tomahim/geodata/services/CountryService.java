@@ -2,6 +2,7 @@ package com.tomahim.geodata.services;
 
 import java.util.List;
 
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 

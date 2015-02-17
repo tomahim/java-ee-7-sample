@@ -16,10 +16,8 @@ Java EE 7 - Sample App with WildFly
  
 ##### Json utility class dev
 
-- add some unit test
-- Refactor by using a recursive data strucutre instead of map (see http://www.dreamincode.net/forums/topic/198160-data-structures-recursion-stacks-and-trees/)
-- make method / api with shorter name and nicer usage
-- Exception handling
+- Better handling for json arrays
+- Move to independent git repo and try to use it as a maven dependency on local maven repo
 
 ### Useful links
 
@@ -27,3 +25,8 @@ Java EE 7 - Sample App with WildFly
 
 http://www.javacodegeeks.com/2012/07/four-solutions-to-lazyinitializationexc_05.html
 https://developer.jboss.org/wiki/OpenSessionInView
+
+#### Recursivity and tree structure
+
+http://www.dreamincode.net/forums/topic/198160-data-structures-recursion-stacks-and-trees/
+

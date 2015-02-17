@@ -1,4 +1,4 @@
-package com.tomahim.geodaota.security;
+package com.tomahim.geodata.security;
 
 import org.jboss.security.SimplePrincipal;
 

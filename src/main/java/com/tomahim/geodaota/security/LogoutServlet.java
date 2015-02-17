@@ -32,7 +32,16 @@ public class LogoutServlet extends HttpServlet {
         response.setHeader("Pragma", "no-cache"); 
         response.setHeader("Expires", new java.util.Date().toString());
         //
-        request.getSession().invalidate();//remove session.
+        if(request.getSession() != null) {
+        	request.getSession().invalidate();//remove session.
+        }
+        if(request.getSession(false) != null) {
+        	request.getSession(false).invalidate();//remove session.
+        }
+        if(request.getSession(true) != null) {
+        	request.getSession(true).invalidate();//remove session.
+        }
+        	
         try {
 			request.logout();
 		} catch (ServletException e) {

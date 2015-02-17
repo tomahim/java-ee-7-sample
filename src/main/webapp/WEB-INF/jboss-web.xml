@@ -16,6 +16,6 @@
 -->
 <!-- Configure usage of the security domain "other" -->
 <jboss-web>
-   <security-domain>servlet-security-quickstart</security-domain>
+   <security-domain flushOnSessionInvalidation="true">servlet-security-quickstart</security-domain>
    <disable-audit>true</disable-audit>
 </jboss-web>

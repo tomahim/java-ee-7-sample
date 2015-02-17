@@ -7,9 +7,9 @@
          metadata-complete="false">  
          
           <login-config>
-		      <auth-method>BASIC</auth-method>
-		      <realm-name>RealmUsersRoles</realm-name>
-		   </login-config>
+	      <auth-method>BASIC</auth-method>
+	      <realm-name>RealmUsersRoles</realm-name>
+	   </login-config>
    
          <filter>  
 	        <filter-name>HibernateFilter</filter-name>  

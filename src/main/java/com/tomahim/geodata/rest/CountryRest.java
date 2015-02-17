@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -19,6 +20,7 @@ import com.tomahim.geodata.services.CountryService;
 import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
 
 @Path("countries") 
+@RolesAllowed("quickstarts")
 @Produces("application/json")
 public class CountryRest {
 	

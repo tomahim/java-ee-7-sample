@@ -5,6 +5,4 @@ angular.module('geodata').controller('LoginCtrl', function($scope, LoginDA) {
 		LoginDA.login(username, password);
 	};
 	
-	LoginDA.login();
-	
 });

@@ -44,6 +44,7 @@ public class LogoutServlet extends HttpServlet {
         	
         try {
 			request.logout();
+			response.sendRedirect("/geodata/");
 		} catch (ServletException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

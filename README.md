@@ -12,7 +12,8 @@ Java EE 7 - Sample App with WildFly
 
 - Secure REST web services
 - Use CSRF token
-- Make a simple page login + user authentification mechanism 
+- Issue with angular parent state 
+
  
 ##### Json utility class dev
 

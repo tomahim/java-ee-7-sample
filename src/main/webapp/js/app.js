@@ -8,6 +8,25 @@ angular.module('geodata', ['ui.router', 'restangular', 'geodata-utils'])
 		controller : 'MapCtrl'
 	  };
 	  
+	  $stateProvider.state('app', {/*
+		 resolve : {
+	    	  isLoggedIn: ['$q', '$rootScope', '$state', 'LoginDA', function($q, $rootScope, $state, LoginDA) {
+	    		  var defered = $q.defer();
+	    		  LoginDA.getPrincipal().then(function(principal) {
+	    			  $rootScope.loginError = false;
+	    			  $rootScope.user = principal;
+	    			  defered.resolve();
+	    		  }, function() {
+	    			  $rootScope.loginError = true;
+	    			  $state.go('login');
+	    			  defered.resolve();
+	    		  });
+	    		  
+	    		 return defered.promise;
+	    	  }]
+	      }
+	  */});
+	  
 	  $stateProvider
 	    .state('countries', {
 	      url: "/countries",
@@ -17,6 +36,22 @@ angular.module('geodata', ['ui.router', 'restangular', 'geodata-utils'])
 	    	      controller: "CountriesCtrl"
 	    	  },
 	    	  "RightContainer" : mainMapView
+	      },
+	      resolve : {
+	    	  isLoggedIn: ['$q', '$rootScope', '$state', 'LoginDA', function($q, $rootScope, $state, LoginDA) {
+	    		  var defered = $q.defer();
+	    		  LoginDA.getPrincipal().then(function(principal) {
+	    			  $rootScope.loginError = false;
+	    			  $rootScope.user = principal;
+	    			  defered.resolve();
+	    		  }, function() {
+	    			  $rootScope.loginError = true;
+	    			  $state.go('login');
+	    			  defered.resolve();
+	    		  });
+	    		  
+	    		 return defered.promise;
+	    	  }]
 	      }
 	  })
 	  .state('login', {
@@ -27,6 +62,21 @@ angular.module('geodata', ['ui.router', 'restangular', 'geodata-utils'])
 	    	      controller: "LoginCtrl"
 	    	  },
 	    	  "RightContainer" : mainMapView
+	      },
+    	  resolve : {
+	    	  isLogged: ['$q', '$rootScope', '$state', 'LoginDA', function($q, $rootScope, $state, LoginDA) {
+	    		  var defered = $q.defer();
+	    		  LoginDA.getPrincipal().then(function(principal) {
+	    			  $rootScope.loginError = false;
+	    			  $rootScope.user = principal;
+	    			  $state.go('countries');
+	    			  defered.resolve();
+	    		  }, function() {
+	    			  $rootScope.loginError = false;
+	    			  defered.resolve();
+	    		  });
+	    		 return defered.promise;
+	    	  }]
 	      }
 	  });
 });

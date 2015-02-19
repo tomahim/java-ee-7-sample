@@ -12,9 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(urlPatterns = {"/logout"})
 public class LogoutServlet extends HttpServlet {
 	
-    @Inject
-    private AccountService accountService;
- 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

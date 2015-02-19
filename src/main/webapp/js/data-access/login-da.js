@@ -5,6 +5,9 @@ angular.module('geodata').factory('LoginDA', function(Restangular) {
 				username : username,
 				password : password
 			});
+		},
+		getPrincipal : function() {
+			return Restangular.service('geodata/rest/account/principal').one().get();
 		}
 	};
 });

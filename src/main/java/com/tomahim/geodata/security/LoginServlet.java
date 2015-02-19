@@ -23,9 +23,6 @@ public class LoginServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	@Inject
-    private AccountService accountService;
  
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -63,16 +60,12 @@ public class LoginServlet extends HttpServlet {
 
     	PostParam params = gson.fromJson(reader, PostParam.class);
         try {
-            String username = params.getUsername();//quickstartUser
-            String password = params.getPassword(); //quickstartPwd1!
-            
+            String username = params.getUsername();//tom
+            String password = params.getPassword(); //azerty            
  
             if (username != null && password != null) {
                 request.login(username, password);
             }
- 
-            Principal principal = request.getUserPrincipal();
-            response.getWriter().println("principal=" + request.getUserPrincipal().getClass().getSimpleName());
  
         } catch (ServletException e) {
         	e.printStackTrace();

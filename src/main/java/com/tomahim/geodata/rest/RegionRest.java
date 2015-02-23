@@ -1,10 +1,8 @@
 package com.tomahim.geodata.rest;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.json.JsonArray;
@@ -16,7 +14,7 @@ import javax.ws.rs.Produces;
 
 import com.tomahim.geodata.entities.Region;
 import com.tomahim.geodata.services.RegionService;
-import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
+import com.tomahim.jsonUtils.api.JsonUtils;
 
 @Path("regions")
 @Produces("application/json")
@@ -28,7 +26,7 @@ public class RegionRest {
 	@GET
 	public JsonArray getAll() {
 		List<Region> regions = regionService.getAll();
-		return JsonUtil.toJsonArray(regions, "id", "name");
+		return JsonUtils.toJsonArray(regions, "id", "name");
 	}
 	
 	@GET
@@ -39,7 +37,7 @@ public class RegionRest {
 		Map<String, String> selection  = new HashMap<String, String>();
 		selection.put("id", "id");
 		selection.put("name", "name");
-		return JsonUtil.toJson(region, selection);
+		return JsonUtils.toJson(region, selection);
 	}
 	
 }

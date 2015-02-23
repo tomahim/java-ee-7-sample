@@ -14,12 +14,6 @@ Java EE 7 - Sample App with WildFly
 - Use CSRF token
 - Issue with angular parent state 
 
- 
-##### Json utility class dev
-
-- Better handling for json arrays
-- Move to independent git repo and try to use it as a maven dependency on local maven repo
-
 ### Useful links
 
 ##### Lazy loading solutions
@@ -27,7 +21,11 @@ Java EE 7 - Sample App with WildFly
 http://www.javacodegeeks.com/2012/07/four-solutions-to-lazyinitializationexc_05.html
 https://developer.jboss.org/wiki/OpenSessionInView
 
-#### Recursivity and tree structure
+##### Recursivity and tree structure
 
 http://www.dreamincode.net/forums/topic/198160-data-structures-recursion-stacks-and-trees/
+
+##### Maven
+
+http://www.mkyong.com/maven/how-to-include-library-manully-into-maven-local-repository/ 
 

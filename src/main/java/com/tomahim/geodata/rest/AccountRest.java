@@ -7,7 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
+import com.tomahim.jsonUtils.api.JsonUtils;
 
 @Path("account")
 @Produces("application/json")
@@ -19,7 +19,7 @@ public class AccountRest {
 		if(servletRequest.getUserPrincipal() == null) {
 			return Response.serverError().build();
 		} else {
-			return Response.ok(JsonUtil.toJson(servletRequest.getUserPrincipal(), "name")).build();			
+			return Response.ok(JsonUtils.toJson(servletRequest.getUserPrincipal(), "name")).build();			
 		}
 	}
 }

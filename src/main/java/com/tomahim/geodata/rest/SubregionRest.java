@@ -12,7 +12,7 @@ import javax.ws.rs.Produces;
 
 import com.tomahim.geodata.entities.Subregion;
 import com.tomahim.geodata.services.SubregionService;
-import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
+import com.tomahim.jsonUtils.api.JsonUtils;
 
 @Path("subregions")
 @Produces("application/json")
@@ -24,14 +24,14 @@ public class SubregionRest {
 	@GET
 	public JsonArray getAll() {
 		List<Subregion> subregions = subregionService.getAll();
-		return JsonUtil.toJsonArray(subregions);
+		return JsonUtils.toJsonArray(subregions);
 	}
 	
 	@GET
 	@Path("/{id}")
 	public JsonObject getById(@PathParam("id") Integer id) {
 		Subregion subregion = subregionService.getById(id);
-		return JsonUtil.toJson(subregion);
+		return JsonUtils.toJson(subregion);
 	}
 	
 }

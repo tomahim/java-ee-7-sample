@@ -17,7 +17,7 @@ import com.google.code.geocoder.model.GeocodeResponse;
 import com.tomahim.geodata.api.google.GoogleGeocodeApi;
 import com.tomahim.geodata.entities.City;
 import com.tomahim.geodata.services.CityService;
-import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
+import com.tomahim.jsonUtils.api.JsonUtils;
 
 @Path("cities")
 @Produces("application/json")
@@ -32,14 +32,14 @@ public class CityRest {
 	@GET
 	public JsonArray getAll() {
 		List<City> cities = cityService.getAll();
-		return JsonUtil.toJsonArray(cities);
+		return JsonUtils.toJsonArray(cities);
 	}
 	
 	@GET
 	@Path("/{id}")
 	public JsonObject getById(@PathParam("id") Integer id) {
 		City city = cityService.getById(id);
-		return JsonUtil.toJson(city);
+		return JsonUtils.toJson(city);
 	}
 	
 	@GET
@@ -47,7 +47,7 @@ public class CityRest {
 	public JsonArray searchCityByName(@PathParam("name") String name) {
 		GeocodeResponse gr = geocodeApi.searchByName(name);
 		Map<String, String> map = new HashMap<String, String>();
-		return JsonUtil.toJsonArray(gr.getResults(), 1);
+		return JsonUtils.toJsonArray(gr.getResults(), 1);
 	}
 	
 	@GET

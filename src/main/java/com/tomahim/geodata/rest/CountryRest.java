@@ -17,7 +17,7 @@ import com.tomahim.geodata.entities.City;
 import com.tomahim.geodata.entities.Country;
 import com.tomahim.geodata.services.CityService;
 import com.tomahim.geodata.services.CountryService;
-import com.tomahim.geodata.utils.jsonUtil.JsonUtil;
+import com.tomahim.jsonUtils.api.JsonUtils;
 
 @Path("countries") 
 @RolesAllowed("quickstarts")
@@ -33,7 +33,7 @@ public class CountryRest {
 	@GET
 	public JsonArray getAll() {
 		List<Country> countries = countryService.getAll();
-		return JsonUtil.toJsonArray(countries);
+		return JsonUtils.toJsonArray(countries);
 	}
 	
 	@GET
@@ -48,20 +48,20 @@ public class CountryRest {
 		selection.put("cities.name", "cities.name");
 		selection.put("cities.id", "cities.id");
 		selection.put("regionId", "region.id");
-		return JsonUtil.toJson(country, selection);
+		return JsonUtils.toJson(country, selection);
 	}
 		
 	@GET
 	@Path("/{id}/capital")
 	public JsonObject getCapitalByCountryId(@PathParam("id") Integer id) {
 		City city = cityService.getCapitalByCountryId(id);
-		return JsonUtil.toJson(city);
+		return JsonUtils.toJson(city);
 	}
 	
 	@GET
 	@Path("/{id}/cities")
 	public JsonArray getCitiesByCountryId(@PathParam("id") Integer id) {
 		List<City> cities = cityService.getCitiesByCountryId(id);
-		return JsonUtil.toJsonArray(cities);
+		return JsonUtils.toJsonArray(cities);
 	}
 }
